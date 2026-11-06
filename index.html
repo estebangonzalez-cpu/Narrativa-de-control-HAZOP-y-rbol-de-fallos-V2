@@ -1,0 +1,2064 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Planta de  cido Sulf rico 500 TPD - P&ID, Lazos de Control, HAZOP, FTA & Gesti n Documental</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap");
+    :root {
+      --bg-page: #f4f6f8;
+      --green-deep: #0b3d23;
+      --green-dark: #124d2e;
+      --green-light: #1c6b41;
+      --yellow-matte: #e5a93b;
+      --yellow-gold: #f4b942;
+      --slate-text: #243342;
+      --slate-subtle: #516377;
+      --border-subtle: #dbe2ea;
+    }
+    body { font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: var(--bg-page); color: var(--slate-text); line-height: 1.5; }
+    .font-mono-code { font-family: "JetBrains Mono", monospace; }
+    .drawer-active { transform: translateX(0%); }
+    .drawer-hidden { transform: translateX(100%); }
+    .hazid-table th { background-color: #0b3d23; color: #ffffff; font-weight: 700; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em; padding: 7px 5px; }
+    .hazid-table td { font-size: 0.75rem; padding: 6px 5px; border-bottom: 1px solid #e2e8f0; vertical-align: top; }
+    .hazid-table tr:hover { background-color: #f8fafc; }
+    .badge-critical { background-color: #fee2e2; color: #991b1b; border: 1px solid #f87171; font-weight: 700; }
+    .badge-high { background-color: #ffedd5; color: #c2410c; border: 1px solid #fb923c; font-weight: 700; }
+    .badge-med { background-color: #fef3c7; color: #b45309; border: 1px solid #fcd34d; font-weight: 700; }
+    .badge-low { background-color: #dcfce7; color: #15803d; border: 1px solid #86efac; font-weight: 700; }
+    .tab-active { background-color: #0b3d23 !important; color: #ffffff !important; border-color: #e5a93b !important; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+  <!-- HEADER -->
+  <header class="bg-[#0b3d23] text-white sticky top-0 z-40 border-b-2 border-[#e5a93b] shadow-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-2 flex items-center justify-between">
+      <div class="flex items-center space-x-3.5">
+        <div class="w-10 h-10 rounded-full bg-white p-0.5 border-2 border-[#e5a93b] flex items-center justify-center flex-shrink-0 shadow overflow-hidden">
+          <img id="headerLogoImg" alt="Logo Universidad de Am rica" class="w-full h-full object-contain">
+        </div>
+        <div>
+          <div class="flex items-center space-x-2">
+            <span class="text-xs font-black tracking-wider text-[#e5a93b] uppercase">UNIVERSIDAD DE AM RICA &bull; FACULTAD DE INGENIER AS</span>
+          </div>
+          <p class="text-xs font-medium text-slate-200">
+            Ingenier a Qu mica &bull; <strong class="text-white font-bold">Dise o de Plantas</strong> &bull; Reporte de Seguridad de Procesos e Instrumentaci n
+          </p>
+        </div>
+      </div>
+      <div class="flex items-center space-x-3">
+        <div class="hidden md:inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-[#124d2e] text-[#f4b942] border border-[#1c6b41]">
+          <span>500 TPD &bull; DCDA 3+1 &bull; ISA-5.1 / IEC 61511</span>
+        </div>
+        <button id="btnOpenIndex" class="inline-flex items-center space-x-1.5 px-3.5 py-1.5 rounded-lg text-xs font-extrabold bg-[#e5a93b] hover:bg-[#d4931a] text-[#0b3d23] transition-all shadow-sm active:scale-95">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 12h16M4 18h7"/></svg>
+          <span> ndice</span>
+        </button>
+      </div>
+    </div>
+  </header>
+  <!-- MAIN CONTENT -->
+  <main class="flex-grow max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8">
+    <div id="slideContent" class="transition-opacity duration-200"></div>
+  </main>
+  <!-- FOOTER -->
+  <footer class="bg-white border-t border-[#dbe2ea] sticky bottom-0 z-30 shadow-lg py-2.5 px-4 sm:px-8">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
+      <div class="flex items-center space-x-2">
+        <button id="btnFullscreen" title="Pantalla Completa" class="p-2 rounded-lg text-slate-500 hover:text-[#0b3d23] hover:bg-slate-100 transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/></svg>
+        </button>
+        <button id="btnOverview" title="Ver  ndice" class="p-2 rounded-lg text-slate-500 hover:text-[#0b3d23] hover:bg-slate-100 transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+        </button>
+      </div>
+      <div class="flex flex-col items-center flex-grow max-w-md mx-4">
+        <div class="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden mb-1">
+          <div id="progressBar" class="bg-[#0b3d23] h-full transition-all duration-300" style="width: 16.6%;"></div>
+        </div>
+        <div id="slideCounterText" class="text-xs font-semibold text-slate-600">Diapositiva 1 de 6</div>
+      </div>
+      <div class="flex items-center space-x-2">
+        <button id="btnPrev" class="px-4 py-1.5 rounded-lg text-xs font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center space-x-1">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
+          <span>Anterior</span>
+        </button>
+        <button id="btnNext" class="px-5 py-1.5 rounded-lg text-xs font-bold text-white bg-[#0b3d23] hover:bg-[#124d2e] disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm flex items-center space-x-1">
+          <span>Siguiente</span>
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+  </footer>
+  <!-- DRAWER -->
+  <div id="drawerOverlay" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 opacity-0 pointer-events-none transition-opacity duration-300"></div>
+  <aside id="drawerNav" class="fixed top-0 right-0 h-full w-80 sm:w-96 bg-white z-50 shadow-2xl p-6 flex flex-col justify-between drawer-hidden transition-transform duration-300">
+    <div>
+      <div class="flex items-center justify-between pb-4 border-b border-slate-200">
+        <div class="flex items-center space-x-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-[#e5a93b]"></span>
+          <h3 class="font-extrabold text-base text-[#0b3d23]"> ndice de Diapositivas</h3>
+        </div>
+        <button id="btnCloseIndex" class="p-1 rounded-md text-slate-400 hover:text-slate-700">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <nav class="mt-4 space-y-1.5 overflow-y-auto max-h-[72vh] pr-1" id="navIndexList"></nav>
+    </div>
+    <div class="pt-4 border-t border-slate-100 text-[11px] text-slate-400 text-center">
+      ANSI/ISA-5.1 &bull; IEC 61511 &bull; IEC 61882 &bull; IEC 61025 &bull; ISA-18.2 &bull; APA 7
+    </div>
+  </aside>
+  <!-- SCRIPTS -->
+  <script>
+    const LOGO_IMG_SRC = "data:image/png;base64,data:image/png;base64,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";
+    function switchTab(containerId, tabId) {
+      const parent = document.getElementById(containerId);
+      if (!parent) return;
+      const panes = parent.querySelectorAll(".tab-pane");
+      panes.forEach(p => p.classList.add("hidden"));
+      const target = parent.querySelector("#" + tabId);
+      if (target) target.classList.remove("hidden");
+      const btns = parent.querySelectorAll(".tab-btn");
+      btns.forEach(b => {
+        if (b.dataset.target === tabId) {
+          b.classList.add("tab-active");
+          b.classList.remove("bg-white", "text-slate-600", "border-slate-200");
+        } else {
+          b.classList.remove("tab-active");
+          b.classList.add("bg-white", "text-slate-600", "border-slate-200");
+        }
+      });
+    }
+    const slides = [
+      {
+        id: "portada",
+        title: "Portada Oficial & Nodos Cr ticos",
+        render: () => `
+          <div class="space-y-6">
+            <div class="bg-[#0b3d23] text-white rounded-3xl p-8 sm:p-12 shadow-2xl border-4 border-[#072917] max-w-5xl mx-auto text-center relative overflow-hidden">
+              <div class="absolute -right-20 -bottom-20 w-72 h-72 rounded-full border-8 border-white/5 pointer-events-none"></div>
+              <div class="absolute -left-20 -top-20 w-72 h-72 rounded-full border-8 border-[#e5a93b]/10 pointer-events-none"></div>
+              <p class="text-xs sm:text-sm font-black tracking-widest text-[#e5a93b] uppercase mb-1">UNIVERSIDAD DE AM RICA &bull; FACULTAD DE INGENIER AS</p>
+              <p class="text-xs text-slate-300 font-medium mb-4">DEPARTAMENTO DE INGENIER A QU MICA &bull; DISE O DE PLANTAS (2026-II)</p>
+              
+              <div class="inline-flex items-center space-x-2 bg-[#124d2e] border border-[#1c6b41] rounded-full px-4 py-1 text-xs text-[#f4b942] font-bold mb-4">
+                <span>REPORTE INTEGRAL DE SEGURIDAD FUNCIONAL &bull; IEC 61511 / ISA-84 / HAZOP / FTA</span>
+              </div>
+
+              <h1 class="text-2xl sm:text-4xl font-black tracking-tight leading-tight max-w-4xl mx-auto mb-3">
+                P&ID, Lazos de Control, Narrativa de Seguridad, HAZOP y  rboles de Fallos (FTA) en Nodos Cr ticos
+              </h1>
+              <p class="text-sm sm:text-base text-slate-200 font-normal max-w-3xl mx-auto mb-6">
+                Planta de  cido Sulf rico de 500 TPD &bull; Tecnolog a Doble Contacto Doble Absorci n (DCDA 3+1) con Integraci n Energ tica y Cogeneraci n El ctrica
+              </p>
+              
+              <div class="inline-block bg-[#082d1a] border border-[#1c6b41] rounded-full px-5 py-1 text-xs text-slate-200 font-medium mb-6">
+                Referencia Industrial: <strong class="text-white font-bold">Nuberg EPC &ndash; Planta Sprea Misr, Ramadan City, Egipto</strong>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-xl mx-auto text-center mb-6">
+                <div class="bg-[#09351e]/90 border border-[#195a35] rounded-xl p-3 shadow">
+                  <p class="text-sm font-bold text-white">Esteban Alejandro Gonz lez Correa</p>
+                  <p class="text-xs font-mono text-[#e5a93b] font-bold mt-0.5">C digo: 6221244</p>
+                </div>
+                <div class="bg-[#09351e]/90 border border-[#195a35] rounded-xl p-3 shadow">
+                  <p class="text-sm font-bold text-white">Luis Alfonso Arias Candia</p>
+                  <p class="text-xs font-mono text-[#e5a93b] font-bold mt-0.5">C digo: 6221290</p>
+                </div>
+              </div>
+
+              <p class="text-xs text-slate-300 font-medium">Bogot  D.C., Colombia &bull; Octubre de 2026</p>
+            </div>
+
+            <!-- Delimitaci n y Justificaci n de los Dos Nodos Cr ticos -->
+            <div class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+              <div class="bg-white p-5 rounded-2xl border-2 border-[#1c6b41]/30 shadow-md">
+                <div class="flex items-center justify-between mb-3 border-b border-slate-100 pb-2">
+                  <div class="flex items-center space-x-2">
+                    <span class="w-3 h-3 rounded-full bg-red-600"></span>
+                    <h3 class="text-sm font-black text-[#0b3d23] uppercase">Nodo Cr tico 1: Convertidor Catal tico R-101</h3>
+                  </div>
+                  <span class="px-2.5 py-0.5 bg-red-100 text-red-800 rounded-full font-bold text-[10px]">SIL-2 &bull; Termodin mica Extrema</span>
+                </div>
+                <p class="text-slate-700 mb-2 leading-relaxed">
+                  <strong>Delimitaci n:</strong> Corriente de gas SO2 desde calder n WHB-101 (420 &plusmn; 5 &deg;C), bypass de gas caliente con v lvula TV-101, Lecho Catal tico 1 de R-101 (V<sub>2</sub>O<sub>5</sub> / Cs), sistema de quench r pido de aire seco FV-101Q y corte de azufre ESDV-01.
+                </p>
+                <div class="bg-red-50 border-l-4 border-red-500 p-2.5 rounded-r-lg text-slate-800 text-[11px] space-y-1">
+                  <p><strong>Justificaci n del Peligro:</strong> Reacci n de oxidaci n fuertemente exot rmica (&Delta;H&deg;<sub>298</sub> = &minus;99 kJ/mol). Alta no linealidad cin tica. Un incremento de SO<sub>2</sub> &gt; 11.5% o bloqueo del bypass genera embalamiento t rmico (T &gt; 630 &deg;C), provocando <em>sinterizaci n irreversible del catalizador</em> y riesgo de rotura de carcasa SS304H con fuga t xica masiva de SO<sub>2</sub> / SO<sub>3</sub>.</p>
+                </div>
+              </div>
+
+              <div class="bg-white p-5 rounded-2xl border-2 border-[#e5a93b]/40 shadow-md">
+                <div class="flex items-center justify-between mb-3 border-b border-slate-100 pb-2">
+                  <div class="flex items-center space-x-2">
+                    <span class="w-3 h-3 rounded-full bg-amber-600"></span>
+                    <h3 class="text-sm font-black text-[#0b3d23] uppercase">Nodo Cr tico 2: C ntara de Mezcla TK-101</h3>
+                  </div>
+                  <span class="px-2.5 py-0.5 bg-amber-100 text-amber-800 rounded-full font-bold text-[10px]">SIL-2 &bull; Qu mico-Corrosivo</span>
+                </div>
+                <p class="text-slate-700 mb-2 leading-relaxed">
+                  <strong>Delimitaci n:</strong> C ntara de bombeo y recirculaci n TK-101, retorno de torres T-201/T-202, l nea de agua de diluci n [28], bombas de  cido P-101A/B, intercambiador de placas E-101 y v lvula de corte de emergencia ESDV-28.
+                </p>
+                <div class="bg-amber-50 border-l-4 border-amber-500 p-2.5 rounded-r-lg text-slate-800 text-[11px] space-y-1">
+                  <p><strong>Justificaci n del Peligro:</strong> Calor de disoluci n extremo del H<sub>2</sub>SO<sub>4</sub> en agua (&sim; &minus;100 kJ/mol de H<sub>2</sub>O). Si la concentraci n disminuye de 98.4% a &lt; 95%, la tasa de corrosi n sobre acero fundido y aleaciones aumenta m s de 100 veces y ocurre ebullici n  cida localizada violenta con generaci n de niebla t xica y sobrepresi n destructiva.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        `
+      },
+      {
+        id: "pid-instrumentacion",
+        title: "1. P&ID, Instrumentaci n ISA y Lazos de Control",
+        render: () => `
+          <div class="space-y-4" id="pidTabsContainer">
+            <!-- Header diapositiva -->
+            <div class="border-b border-slate-200 pb-2.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div>
+                <span class="text-xs font-bold uppercase tracking-wider text-[#e5a93b]">M dulo 1 &bull; Ingenier a de Instrumentaci n &amp; Control</span>
+                <h2 class="text-xl sm:text-2xl font-black text-[#0b3d23]">P&amp;ID Normalizado ISA-5.1 y Lazos de Control en Nodos Cr ticos</h2>
+              </div>
+              <div class="flex items-center space-x-1.5 bg-slate-100 p-1 rounded-xl border border-slate-200 self-start sm:self-auto">
+                <button onclick="switchTab('pidTabsContainer', 'tab-pid-nodo1')" data-target="tab-pid-nodo1" class="tab-btn px-3 py-1 rounded-lg text-xs font-bold border transition-all tab-active">
+                  Nodo 1: Convertidor R-101
+                </button>
+                <button onclick="switchTab('pidTabsContainer', 'tab-pid-nodo2')" data-target="tab-pid-nodo2" class="tab-btn px-3 py-1 rounded-lg text-xs font-bold border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 transition-all">
+                  Nodo 2: C ntara TK-101
+                </button>
+                <button onclick="switchTab('pidTabsContainer', 'tab-pid-matriz')" data-target="tab-pid-matriz" class="tab-btn px-3 py-1 rounded-lg text-xs font-bold border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 transition-all">
+                  Matriz ISA &amp; Lazos
+                </button>
+              </div>
+            </div>
+
+            <!-- TAB 1: NODO 1 R-101 -->
+            <div id="tab-pid-nodo1" class="tab-pane space-y-4">
+              <!-- P&ID Vectorial SVG R-101 -->
+              <div class="bg-white p-3 rounded-2xl border border-slate-200 shadow-md overflow-hidden">
+                <div class="flex items-center justify-between pb-2 mb-2 border-b border-slate-100 text-xs">
+                  <div class="flex items-center space-x-2">
+                    <span class="font-mono text-[11px] font-bold bg-[#0b3d23] text-white px-2 py-0.5 rounded">PID-500TPD-R101-001</span>
+                    <strong class="text-slate-800">Diagrama de Tuber as e Instrumentaci n &ndash; Convertidor R-101 (Lecho 1) &amp; Calder n WHB-101</strong>
+                  </div>
+                  <span class="text-[11px] font-semibold text-slate-500">Norma: ANSI/ISA-5.1-2009 &bull; SIF-01 (SIL-2)</span>
+                </div>
+
+                <div class="w-full bg-[#f8fafc] rounded-xl border border-slate-300 p-2 overflow-x-auto">
+                  <svg viewBox="0 0 960 420" class="w-full min-w-[850px] h-auto select-none" style="font-family:'JetBrains Mono',monospace;">
+                    <defs>
+                      <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                        <path d="M 0 1 L 10 5 L 0 9 z" fill="#334155"/>
+                      </marker>
+                      <marker id="arrow-green" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                        <path d="M 0 1 L 10 5 L 0 9 z" fill="#0b3d23"/>
+                      </marker>
+                      <marker id="arrow-red" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                        <path d="M 0 1 L 10 5 L 0 9 z" fill="#dc2626"/>
+                      </marker>
+                    </defs>
+
+                    <!-- FONDO Y REJILLA SUTIL -->
+                    <rect width="960" height="420" fill="#ffffff" rx="8"/>
+                    <rect x="10" y="10" width="940" height="400" fill="none" stroke="#cbd5e1" stroke-width="1"/>
+
+                    <!-- LINEAS DE PROCESO PRINCIPAL (GAS SO2 DESDE HORNO/WHB) -->
+                    <!-- Entrada de gas a WHB-101 -->
+                    <line x1="30" y1="180" x2="140" y2="180" stroke="#0b3d23" stroke-width="4" marker-end="url(#arrow-green)"/>
+                    <text x="35" y="170" font-size="10" font-weight="bold" fill="#0b3d23">LINEA 04-SO2-18\" (1150 C)</text>
+
+                    <!-- Caldera WHB-101 -->
+                    <rect x="140" y="120" width="100" height="120" rx="10" fill="#f1f5f9" stroke="#0b3d23" stroke-width="3"/>
+                    <text x="190" y="170" font-size="12" font-weight="bold" fill="#0b3d23" text-anchor="middle">WHB-101</text>
+                    <text x="190" y="185" font-size="9" fill="#64748b" text-anchor="middle">Calder n Calor</text>
+                    <text x="190" y="197" font-size="9" fill="#64748b" text-anchor="middle">Residual</text>
+
+                    <!-- Salida fr a de WHB-101 hacia mezcla -->
+                    <line x1="240" y1="180" x2="330" y2="180" stroke="#0b3d23" stroke-width="4"/>
+                    <text x="250" y="170" font-size="9" fill="#475569">400 C</text>
+
+                    <!-- L nea de Bypass de gas caliente -->
+                    <line x1="100" y1="180" x2="100" y2="70" stroke="#0b3d23" stroke-width="3"/>
+                    <line x1="100" y1="70" x2="330" y2="70" stroke="#0b3d23" stroke-width="3"/>
+                    <line x1="330" y1="70" x2="330" y2="180" stroke="#0b3d23" stroke-width="3" marker-end="url(#arrow-green)"/>
+                    <text x="180" y="60" font-size="9" font-weight="bold" fill="#0b3d23">BYPASS GAS CALIENTE (1050 C)</text>
+
+                    <!-- V lvula de Bypass TV-101 (Fail-Closed hacia bypass para forzar paso por caldera y enfriar gas en falla) -->
+                    <!-- Simbolog a v lvula mariposa / globo -->
+                    <polygon points="200,60 220,70 200,80" fill="#0b3d23"/>
+                    <polygon points="240,60 220,70 240,80" fill="#0b3d23"/>
+                    <!-- Actuador de diafragma con resorte Fail-Closed -->
+                    <line x1="220" y1="70" x2="220" y2="40" stroke="#475569" stroke-width="1.5"/>
+                    <path d="M 205,40 Q 220,25 235,40 Z" fill="#94a3b8" stroke="#475569" stroke-width="1.5"/>
+                    <text x="245" y="42" font-size="8" font-weight="bold" fill="#dc2626">FC</text>
+                    <text x="210" y="93" font-size="9" font-weight="bold" fill="#0b3d23">TV-101</text>
+
+                    <!-- Entrada combinada hacia Convertidor R-101 (Lecho 1) -->
+                    <line x1="330" y1="180" x2="470" y2="180" stroke="#0b3d23" stroke-width="4" marker-end="url(#arrow-green)"/>
+                    <text x="350" y="195" font-size="10" font-weight="bold" fill="#0b3d23">LINEA 06-SO2-20\" (420 5 C, 11% SO2)</text>
+
+                    <!-- Convertidor R-101 (Primer Lecho) -->
+                    <rect x="470" y="90" width="160" height="250" rx="20" fill="#f8fafc" stroke="#0b3d23" stroke-width="3"/>
+                    <text x="550" y="115" font-size="13" font-weight="bold" fill="#0b3d23" text-anchor="middle">R-101</text>
+                    <text x="550" y="130" font-size="9" fill="#64748b" text-anchor="middle">Convertidor Catal tico</text>
+
+                    <!-- Lecho Catal tico 1 (V2O5 con soporte) -->
+                    <rect x="485" y="150" width="130" height="50" fill="#fde68a" stroke="#d97706" stroke-dasharray="3,3" stroke-width="1.5"/>
+                    <text x="550" y="175" font-size="10" font-weight="bold" fill="#92400e" text-anchor="middle">LECHO 1 (V2O5 / Cs)</text>
+                    <text x="550" y="190" font-size="8" fill="#b45309" text-anchor="middle">?H = -99 kJ/mol (600-610 C)</text>
+
+                    <!-- Salida de Lecho 1 hacia Lecho 2 -->
+                    <line x1="550" y1="200" x2="550" y2="340" stroke="#0b3d23" stroke-width="3"/>
+                    <line x1="550" y1="340" x2="680" y2="340" stroke="#0b3d23" stroke-width="4" marker-end="url(#arrow-green)"/>
+                    <text x="570" y="330" font-size="9" fill="#475569">A Intercambiador HX-101 / Lecho 2 (610 C)</text>
+
+                    <!-- L nea de Aire Seco Quench (Enfriamiento de Emergencia) -->
+                    <line x1="470" y1="280" x2="410" y2="280" stroke="#0284c7" stroke-width="3"/>
+                    <line x1="410" y1="280" x2="410" y2="370" stroke="#0284c7" stroke-width="3"/>
+                    <line x1="320" y1="370" x2="410" y2="370" stroke="#0284c7" stroke-width="3" marker-end="url(#arrow)"/>
+                    <text x="240" y="365" font-size="9" font-weight="bold" fill="#0284c7">AIRE SECO QUENCH (BL-101)</text>
+
+                    <!-- V lvula de Quench FV-101Q (Fail-Open) -->
+                    <polygon points="360,360 375,370 360,380" fill="#0284c7"/>
+                    <polygon points="390,360 375,370 390,380" fill="#0284c7"/>
+                    <line x1="375" y1="360" x2="375" y2="345" stroke="#475569" stroke-width="1.5"/>
+                    <path d="M 365,345 Q 375,330 385,345 Z" fill="#94a3b8" stroke="#475569" stroke-width="1.5"/>
+                    <text x="395" y="347" font-size="8" font-weight="bold" fill="#16a34a">FO</text>
+                    <text x="360" y="395" font-size="9" font-weight="bold" fill="#0284c7">FV-101Q</text>
+
+                    <!-- V lvula de Corte R pido de Azufre ESDV-01 (Lazo SIF-01 en alimentaci n a B-101) -->
+                    <rect x="25" y="270" width="130" height="70" rx="8" fill="#fff1f2" stroke="#e11d48" stroke-width="1.5"/>
+                    <text x="90" y="288" font-size="9" font-weight="bold" fill="#9f1239" text-anchor="middle">ALIMENTACI N AZUFRE</text>
+                    <polygon points="60,310 75,320 60,330" fill="#be123c"/>
+                    <polygon points="90,310 75,320 90,330" fill="#be123c"/>
+                    <line x1="75" y1="310" x2="75" y2="295" stroke="#475569" stroke-width="1.5"/>
+                    <path d="M 65,295 Q 75,285 85,295 Z" fill="#94a3b8" stroke="#475569" stroke-width="1.5"/>
+                    <text x="95" y="318" font-size="8" font-weight="bold" fill="#be123c">FC</text>
+                    <text x="95" y="335" font-size="8" font-weight="bold" fill="#be123c">ESDV-01 (&lt;2s)</text>
+
+                    <!-- INSTRUMENTOS ISA (BURBUJAS) -->
+                    <!-- Transmisores de Temperatura 2oo3 (TIT-101A, B, C) en Lecho 1 -->
+                    <!-- TIT-101A -->
+                    <circle cx="700" cy="130" r="17" fill="#ffffff" stroke="#0b3d23" stroke-width="2"/>
+                    <line x1="683" y1="130" x2="717" y2="130" stroke="#0b3d23" stroke-width="1"/>
+                    <text x="700" y="125" font-size="8" font-weight="bold" fill="#0b3d23" text-anchor="middle">TIT</text>
+                    <text x="700" y="141" font-size="8" font-weight="bold" fill="#0b3d23" text-anchor="middle">101A</text>
+                    <!-- L nea de sensor -->
+                    <line x1="615" y1="165" x2="685" y2="135" stroke="#64748b" stroke-dasharray="2,2" stroke-width="1"/>
+
+                    <!-- TIT-101B -->
+                    <circle cx="700" cy="175" r="17" fill="#ffffff" stroke="#0b3d23" stroke-width="2"/>
+                    <line x1="683" y1="175" x2="717" y2="175" stroke="#0b3d23" stroke-width="1"/>
+                    <text x="700" y="170" font-size="8" font-weight="bold" fill="#0b3d23" text-anchor="middle">TIT</text>
+                    <text x="700" y="186" font-size="8" font-weight="bold" fill="#0b3d23" text-anchor="middle">101B</text>
+                    <line x1="615" y1="175" x2="683" y2="175" stroke="#64748b" stroke-dasharray="2,2" stroke-width="1"/>
+
+                    <!-- TIT-101C -->
+                    <circle cx="700" cy="220" r="17" fill="#ffffff" stroke="#0b3d23" stroke-width="2"/>
+                    <line x1="683" y1="220" x2="717" y2="220" stroke="#0b3d23" stroke-width="1"/>
+                    <text x="700" y="215" font-size="8" font-weight="bold" fill="#0b3d23" text-anchor="middle">TIT</text>
+                    <text x="700" y="231" font-size="8" font-weight="bold" fill="#0b3d23" text-anchor="middle">101C</text>
+                    <line x1="615" y1="185" x2="685" y2="215" stroke="#64748b" stroke-dasharray="2,2" stroke-width="1"/>
+
+                    <!-- Votador 2oo3 y SIS (TSHH-101 / SIF-01) -->
+                    <rect x="760" y="150" width="70" height="50" rx="8" fill="#fef2f2" stroke="#dc2626" stroke-width="2"/>
+                    <text x="795" y="170" font-size="9" font-weight="bold" fill="#991b1b" text-anchor="middle">SIS (2oo3)</text>
+                    <text x="795" y="188" font-size="9" font-weight="bold" fill="#dc2626" text-anchor="middle">TSHH-101</text>
+                    <!-- Conexiones a SIS -->
+                    <line x1="717" y1="130" x2="760" y2="160" stroke="#dc2626" stroke-dasharray="3,3"/>
+                    <line x1="717" y1="175" x2="760" y2="175" stroke="#dc2626" stroke-dasharray="3,3"/>
+                    <line x1="717" y1="220" x2="760" y2="190" stroke="#dc2626" stroke-dasharray="3,3"/>
+
+                    <!-- Se al de disparo SIS a ESDV-01 y FV-101Q -->
+                    <path d="M 795,200 L 795,395 L 75,395 L 75,340" fill="none" stroke="#dc2626" stroke-width="2" stroke-dasharray="4,2"/>
+                    <text x="200" y="390" font-size="8" font-weight="bold" fill="#dc2626">INTERLOCK SIF-01: DISPARO CORTE AZUFRE (&lt;2s) &amp; APERTURA QUENCH</text>
+                    <line x1="375" y1="395" x2="375" y2="385" stroke="#dc2626" stroke-width="2"/>
+
+                    <!-- Controlador en DCS BPCS (TIC-101) para TV-101 -->
+                    <!-- Transmisor TIT-101 (Entrada lecho 1) -->
+                    <circle cx="410" cy="120" r="17" fill="#ffffff" stroke="#0b3d23" stroke-width="2"/>
+                    <line x1="393" y1="120" x2="427" y2="120" stroke="#0b3d23" stroke-width="1"/>
+                    <text x="410" y="115" font-size="8" font-weight="bold" fill="#0b3d23" text-anchor="middle">TIT</text>
+                    <text x="410" y="131" font-size="8" font-weight="bold" fill="#0b3d23" text-anchor="middle">101</text>
+                    <line x1="410" y1="178" x2="410" y2="137" stroke="#64748b" stroke-dasharray="2,2"/>
+
+                    <!-- Controlador DCS TIC-101 -->
+                    <rect x="290" y="25" width="45" height="35" rx="5" fill="#f8fafc" stroke="#0b3d23" stroke-width="2"/>
+                    <circle cx="312" cy="42" r="14" fill="#ffffff" stroke="#0b3d23" stroke-width="1"/>
+                    <text x="312" y="39" font-size="8" font-weight="bold" fill="#0b3d23" text-anchor="middle">TIC</text>
+                    <text x="312" y="49" font-size="8" font-weight="bold" fill="#0b3d23" text-anchor="middle">101</text>
+                    <!-- Se al digital DCS de TIT-101 a TIC-101 -->
+                    <path d="M 410,103 L 410,42 L 335,42" fill="none" stroke="#0b3d23" stroke-dasharray="3,2" stroke-width="1.5"/>
+                    <!-- Salida 4-20mA hacia posicionador de TV-101 -->
+                    <line x1="290" y1="42" x2="235" y2="42" stroke="#0b3d23" stroke-dasharray="3,2" stroke-width="1.5"/>
+
+                    <!-- MEMBRETE OFICIAL NORMALIZADO (ISO 7200 / ISA) -->
+                    <g transform="translate(620, 275)">
+                      <rect width="320" height="125" fill="#ffffff" stroke="#0b3d23" stroke-width="1.5"/>
+                      <line x1="0" y1="25" x2="320" y2="25" stroke="#cbd5e1" stroke-width="1"/>
+                      <line x1="0" y1="50" x2="320" y2="50" stroke="#cbd5e1" stroke-width="1"/>
+                      <line x1="0" y1="85" x2="320" y2="85" stroke="#cbd5e1" stroke-width="1"/>
+                      <line x1="160" y1="50" x2="160" y2="125" stroke="#cbd5e1" stroke-width="1"/>
+                      <line x1="240" y1="50" x2="240" y2="85" stroke="#cbd5e1" stroke-width="1"/>
+
+                      <text x="10" y="16" font-size="9" font-weight="bold" fill="#0b3d23">UNIVERSIDAD DE AM RICA &bull; PLANTA H2SO4 500 TPD</text>
+                      <text x="10" y="40" font-size="10" font-weight="bold" fill="#1e293b">P&amp;ID NODO 1: CONVERTIDOR R-101 &amp; WHB-101</text>
+                      
+                      <text x="10" y="63" font-size="8" fill="#64748b">C DIGO PLANO:</text>
+                      <text x="10" y="77" font-size="9" font-weight="bold" fill="#0b3d23">PID-500TPD-R101-001</text>
+                      
+                      <text x="170" y="63" font-size="8" fill="#64748b">REV:</text>
+                      <text x="170" y="77" font-size="9" font-weight="bold" fill="#0b3d23">0 (APROBADO)</text>
+                      
+                      <text x="250" y="63" font-size="8" fill="#64748b">ESCALA:</text>
+                      <text x="250" y="77" font-size="9" font-weight="bold" fill="#0b3d23">S/E (NTS)</text>
+                      
+                      <text x="10" y="98" font-size="8" fill="#64748b">ELABOR : E. Gonz lez / L. Arias</text>
+                      <text x="10" y="113" font-size="8" fill="#64748b">FECHA: Octubre 2026 &bull; HOJA: 1 de 2</text>
+
+                      <text x="170" y="98" font-size="8" fill="#64748b">REVIS : C tedra Dise o Plantas</text>
+                      <text x="170" y="113" font-size="8" fill="#64748b">APROB : Comit  Curricular IQ</text>
+                    </g>
+                  </svg>
+                </div>
+              </div>
+
+              <!-- Ficha T cnica del Lazo Cr tico y Justificaci n ISA -->
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+                <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm space-y-1.5">
+                  <span class="text-[10px] font-mono font-bold text-[#e5a93b] uppercase">Variables del Lazo TIC-101</span>
+                  <h4 class="font-extrabold text-[#0b3d23] text-sm">Control T rmico Lecho 1</h4>
+                  <p class="text-slate-700 text-[11px]">&bull; <strong>Variable Controlada (PV):</strong> Temp. entrada a Lecho 1 (420 &plusmn; 5 &deg;C) y Temp. interior (600 &ndash; 610 &deg;C).</p>
+                  <p class="text-slate-700 text-[11px]">&bull; <strong>Variable Manipulada (MV):</strong> Posici n angular de v lvula de mariposa TV-101 en bypass de WHB-101 (0 &ndash; 100%).</p>
+                  <p class="text-slate-700 text-[11px]">&bull; <strong>Perturbaciones (DV):</strong> Fluctuaciones en concentraci n de SO<sub>2</sub> (9 &ndash; 12%), cambios de carga del soplador BL-101 y temperatura ambiente.</p>
+                </div>
+
+                <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm space-y-1.5">
+                  <span class="text-[10px] font-mono font-bold text-[#e5a93b] uppercase">Estrategia &amp; Instrumentos</span>
+                  <h4 class="font-extrabold text-[#0b3d23] text-sm">Selecci n &amp; Modos Seguros</h4>
+                  <p class="text-slate-700 text-[11px]">&bull; <strong>Estrategia:</strong> Cascada (TIC-101 maestro en lecho, TPC esclavo en bypass) con corte anticipativo por ratio O<sub>2</sub>/SO<sub>2</sub>.</p>
+                  <p class="text-slate-700 text-[11px]">&bull; <strong>Sensores:</strong> Termocuplas triples Tipo K multipunto con vaina de Inconel 600 resistente a gas sulfuroso oxidante a 700 &deg;C.</p>
+                  <p class="text-slate-700 text-[11px]">&bull; <strong>Posici n Falla Segura:</strong> TV-101 es <strong>Fail-Closed (FC)</strong>. Al perder aire, se cierra el bypass forzando el 100% del gas a enfriarse en WHB-101.</p>
+                </div>
+
+                <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm space-y-1.5">
+                  <span class="text-[10px] font-mono font-bold text-red-600 uppercase">Seguridad SIS &amp; Alarmas</span>
+                  <h4 class="font-extrabold text-red-800 text-sm">SIF-01 (SIL-2) Votaci n 2oo3</h4>
+                  <p class="text-slate-700 text-[11px]">&bull; <strong>Alarmas BPCS:</strong> TAL-101 (410 &deg;C), TAH-101 (615 &deg;C, intervenci n operador &lt; 10 min).</p>
+                  <p class="text-slate-700 text-[11px]">&bull; <strong>Disparo SIS (TSHH-101):</strong> &ge; 630 &deg;C con l gica 2oo3 entre TIT-101A/B/C.</p>
+                  <p class="text-slate-700 text-[11px]">&bull; <strong>Acci n Protectora:</strong> Cierre estanco de ESDV-01 de azufre en &lt; 2 s y apertura total de quench FV-101Q (Fail-Open).</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- TAB 2: NODO 2 TK-101 -->
+            <div id="tab-pid-nodo2" class="tab-pane hidden space-y-4">
+              <!-- P&ID Vectorial SVG TK-101 -->
+              <div class="bg-white p-3 rounded-2xl border border-slate-200 shadow-md overflow-hidden">
+                <div class="flex items-center justify-between pb-2 mb-2 border-b border-slate-100 text-xs">
+                  <div class="flex items-center space-x-2">
+                    <span class="font-mono text-[11px] font-bold bg-[#0b3d23] text-white px-2 py-0.5 rounded">PID-500TPD-TK101-002</span>
+                    <strong class="text-slate-800">Diagrama de Tuber as e Instrumentaci n &ndash; C ntara de Mezcla TK-101 &amp; Enfriador E-101</strong>
+                  </div>
+                  <span class="text-[11px] font-semibold text-slate-500">Norma: ANSI/ISA-5.1-2009 &bull; SIF-02 (SIL-2)</span>
+                </div>
+
+                <div class="w-full bg-[#f8fafc] rounded-xl border border-slate-300 p-2 overflow-x-auto">
+                  <svg viewBox="0 0 960 420" class="w-full min-w-[850px] h-auto select-none" style="font-family:'JetBrains Mono',monospace;">
+                    <!-- FONDO -->
+                    <rect width="960" height="420" fill="#ffffff" rx="8"/>
+                    <rect x="10" y="10" width="940" height="400" fill="none" stroke="#cbd5e1" stroke-width="1"/>
+
+                    <!-- RETORNO DE  CIDO DE TORRES T-201 / T-202 -->
+                    <line x1="30" y1="120" x2="220" y2="120" stroke="#0b3d23" stroke-width="4" marker-end="url(#arrow-green)"/>
+                    <text x="35" y="110" font-size="10" font-weight="bold" fill="#0b3d23">LINEA 22-ACID-10\" (98.6% H2SO4, 82 C)</text>
+
+                    <!-- L NEA DE AGUA DE DILUCI N [28] -->
+                    <line x1="30" y1="220" x2="220" y2="220" stroke="#0284c7" stroke-width="3" marker-end="url(#arrow)"/>
+                    <text x="35" y="210" font-size="10" font-weight="bold" fill="#0284c7">LINEA 28-DM-WATER-3\" (Agua Desmineralizada)</text>
+
+                    <!-- V lvula de Control FV-28 (Fail-Closed) -->
+                    <polygon points="100,210 115,220 100,230" fill="#0284c7"/>
+                    <polygon points="130,210 115,220 130,230" fill="#0284c7"/>
+                    <line x1="115" y1="210" x2="115" y2="195" stroke="#475569" stroke-width="1.5"/>
+                    <path d="M 105,195 Q 115,185 125,195 Z" fill="#94a3b8" stroke="#475569" stroke-width="1.5"/>
+                    <text x="135" y="202" font-size="8" font-weight="bold" fill="#dc2626">FC</text>
+                    <text x="100" y="245" font-size="9" font-weight="bold" fill="#0284c7">FV-28</text>
+
+                    <!-- V lvula de Corte de Emergencia ESDV-28 (SIS Fail-Closed) -->
+                    <polygon points="160,210 175,220 160,230" fill="#dc2626"/>
+                    <polygon points="190,210 175,220 190,230" fill="#dc2626"/>
+                    <line x1="175" y1="210" x2="175" y2="195" stroke="#475569" stroke-width="1.5"/>
+                    <path d="M 165,195 Q 175,185 185,195 Z" fill="#fca5a5" stroke="#dc2626" stroke-width="1.5"/>
+                    <text x="195" y="202" font-size="8" font-weight="bold" fill="#dc2626">FC</text>
+                    <text x="150" y="245" font-size="9" font-weight="bold" fill="#dc2626">ESDV-28 (&lt;1.5s)</text>
+
+                    <!-- C NTARA TK-101 (Tanque vertical cil ndrico) -->
+                    <rect x="220" y="90" width="160" height="230" rx="15" fill="#f8fafc" stroke="#0b3d23" stroke-width="3"/>
+                    <text x="300" y="115" font-size="13" font-weight="bold" fill="#0b3d23" text-anchor="middle">TK-101</text>
+                    <text x="300" y="130" font-size="9" fill="#64748b" text-anchor="middle">C ntara de Bombeo</text>
+                    <!-- Nivel l quido -->
+                    <path d="M 225,230 Q 300,225 375,230 L 375,310 Q 300,315 225,310 Z" fill="#e2e8f0" stroke="#94a3b8" stroke-dasharray="2,2"/>
+                    <text x="300" y="270" font-size="10" font-weight="bold" fill="#0b3d23" text-anchor="middle">H2SO4 98.4% wt (75 C)</text>
+
+                    <!-- V lvula de Seguridad de Alivio PSV-101 -->
+                    <line x1="300" y1="90" x2="300" y2="40" stroke="#0b3d23" stroke-width="2"/>
+                    <polygon points="290,40 300,50 310,40" fill="#0b3d23"/>
+                    <polygon points="300,50 310,60 300,70" fill="#0b3d23"/>
+                    <circle cx="300" cy="30" r="12" fill="#ffffff" stroke="#0b3d23" stroke-width="1.5"/>
+                    <text x="300" y="33" font-size="7" font-weight="bold" fill="#0b3d23" text-anchor="middle">PSV</text>
+                    <text x="300" y="42" font-size="6" font-weight="bold" fill="#0b3d23" text-anchor="middle">101</text>
+
+                    <!-- Succi n de Bombas P-101A/B -->
+                    <line x1="300" y1="320" x2="300" y2="360" stroke="#0b3d23" stroke-width="4"/>
+                    <line x1="300" y1="360" x2="430" y2="360" stroke="#0b3d23" stroke-width="4"/>
+
+                    <!-- Bomba P-101A (S mbolo centr fugo) -->
+                    <circle cx="450" cy="360" r="20" fill="#ffffff" stroke="#0b3d23" stroke-width="2.5"/>
+                    <polygon points="440,345 470,360 440,375" fill="#0b3d23"/>
+                    <text x="450" y="395" font-size="9" font-weight="bold" fill="#0b3d23" text-anchor="middle">P-101A/B</text>
+
+                    <!-- Descarga hacia Intercambiador E-101 -->
+                    <line x1="470" y1="360" x2="550" y2="360" stroke="#0b3d23" stroke-width="4"/>
+                    <line x1="550" y1="360" x2="550" y2="280" stroke="#0b3d23" stroke-width="4" marker-end="url(#arrow-green)"/>
+
+                    <!-- Intercambiador E-101 (Placas aleaci n SX / Hastelloy) -->
+                    <rect x="520" y="190" width="80" height="90" rx="8" fill="#f1f5f9" stroke="#0b3d23" stroke-width="2.5"/>
+                    <line x1="535" y1="190" x2="585" y2="280" stroke="#0b3d23" stroke-width="1.5"/>
+                    <line x1="545" y1="190" x2="595" y2="280" stroke="#0b3d23" stroke-width="1.5"/>
+                    <text x="560" y="235" font-size="11" font-weight="bold" fill="#0b3d23" text-anchor="middle">E-101</text>
+                    <text x="560" y="248" font-size="8" fill="#64748b" text-anchor="middle">Enfriador  cido</text>
+
+                    <!-- Salida de  cido fr o a Torres T-201 / T-202 -->
+                    <line x1="560" y1="190" x2="560" y2="90" stroke="#0b3d23" stroke-width="4"/>
+                    <line x1="560" y1="90" x2="680" y2="90" stroke="#0b3d23" stroke-width="4" marker-end="url(#arrow-green)"/>
+                    <text x="575" y="80" font-size="9" font-weight="bold" fill="#0b3d23">A TORRES T-201 / T-202 (75 C)</text>
+
+                    <!-- INSTRUMENTOS NODO 2 -->
+                    <!-- Analizador de Concentraci n AT-101A (Coriolis + Conductividad) en descarga -->
+                    <circle cx="610" cy="140" r="16" fill="#ffffff" stroke="#0b3d23" stroke-width="2"/>
+                    <line x1="594" y1="140" x2="626" y2="140" stroke="#0b3d23" stroke-width="1"/>
+                    <text x="610" y="135" font-size="8" font-weight="bold" fill="#0b3d23" text-anchor="middle">AT</text>
+                    <text x="610" y="151" font-size="8" font-weight="bold" fill="#0b3d23" text-anchor="middle">101A</text>
+                    <line x1="560" y1="140" x2="594" y2="140" stroke="#64748b" stroke-dasharray="2,2"/>
+
+                    <!-- Controlador AIC-101 en DCS -->
+                    <rect x="585" y="25" width="45" height="35" rx="5" fill="#f8fafc" stroke="#0b3d23" stroke-width="2"/>
+                    <circle cx="607" cy="42" r="14" fill="#ffffff" stroke="#0b3d23" stroke-width="1"/>
+                    <text x="607" y="39" font-size="8" font-weight="bold" fill="#0b3d23" text-anchor="middle">AIC</text>
+                    <text x="607" y="49" font-size="8" font-weight="bold" fill="#0b3d23" text-anchor="middle">101</text>
+                    <line x1="610" y1="124" x2="610" y2="60" stroke="#0b3d23" stroke-dasharray="3,2"/>
+                    <!-- Salida DCS a FV-28 -->
+                    <path d="M 585,42 L 115,42 L 115,185" fill="none" stroke="#0b3d23" stroke-dasharray="3,2"/>
+
+                    <!-- Transmisor Anal tico SIS Redundante (AT-101B / ACLL-101) -->
+                    <circle cx="655" cy="140" r="16" fill="#fef2f2" stroke="#dc2626" stroke-width="2"/>
+                    <text x="655" y="136" font-size="7" font-weight="bold" fill="#991b1b" text-anchor="middle">ACLL</text>
+                    <text x="655" y="150" font-size="7" font-weight="bold" fill="#dc2626" text-anchor="middle">101</text>
+                    <line x1="626" y1="140" x2="639" y2="140" stroke="#dc2626" stroke-dasharray="2,2"/>
+
+                    <!-- Transmisor de Nivel Radar Guiado LT-101 -->
+                    <circle cx="350" cy="50" r="16" fill="#ffffff" stroke="#0b3d23" stroke-width="2"/>
+                    <line x1="334" y1="50" x2="366" y2="50" stroke="#0b3d23" stroke-width="1"/>
+                    <text x="350" y="46" font-size="8" font-weight="bold" fill="#0b3d23" text-anchor="middle">LT</text>
+                    <text x="350" y="60" font-size="8" font-weight="bold" fill="#0b3d23" text-anchor="middle">101</text>
+                    <line x1="350" y1="90" x2="350" y2="66" stroke="#64748b" stroke-dasharray="2,2"/>
+
+                    <!-- Interruptor de Nivel Muy Alto SIS LSHH-101 -->
+                    <circle cx="395" cy="50" r="16" fill="#fef2f2" stroke="#dc2626" stroke-width="2"/>
+                    <text x="395" y="46" font-size="7" font-weight="bold" fill="#991b1b" text-anchor="middle">LSHH</text>
+                    <text x="395" y="59" font-size="7" font-weight="bold" fill="#dc2626" text-anchor="middle">101</text>
+
+                    <!-- L gica SIS SIF-02: Disparo de ESDV-28 por ACLL o LSHH -->
+                    <path d="M 655,156 L 655,300 L 175,300 L 175,230" fill="none" stroke="#dc2626" stroke-width="2" stroke-dasharray="4,2"/>
+                    <text x="210" y="295" font-size="8" font-weight="bold" fill="#dc2626">INTERLOCK SIF-02: CIERRE INMEDIATO ESDV-28 (&lt;1.5s) POR CONCENTRACI N &lt;95% O NIVEL &gt;85%</text>
+
+                    <!-- MEMBRETE OFICIAL NORMALIZADO (ISO 7200 / ISA) -->
+                    <g transform="translate(620, 275)">
+                      <rect width="320" height="125" fill="#ffffff" stroke="#0b3d23" stroke-width="1.5"/>
+                      <line x1="0" y1="25" x2="320" y2="25" stroke="#cbd5e1" stroke-width="1"/>
+                      <line x1="0" y1="50" x2="320" y2="50" stroke="#cbd5e1" stroke-width="1"/>
+                      <line x1="0" y1="85" x2="320" y2="85" stroke="#cbd5e1" stroke-width="1"/>
+                      <line x1="160" y1="50" x2="160" y2="125" stroke="#cbd5e1" stroke-width="1"/>
+                      <line x1="240" y1="50" x2="240" y2="85" stroke="#cbd5e1" stroke-width="1"/>
+
+                      <text x="10" y="16" font-size="9" font-weight="bold" fill="#0b3d23">UNIVERSIDAD DE AM RICA &bull; PLANTA H2SO4 500 TPD</text>
+                      <text x="10" y="40" font-size="10" font-weight="bold" fill="#1e293b">P&amp;ID NODO 2: C NTARA TK-101 &amp; ENFRIADOR E-101</text>
+                      
+                      <text x="10" y="63" font-size="8" fill="#64748b">C DIGO PLANO:</text>
+                      <text x="10" y="77" font-size="9" font-weight="bold" fill="#0b3d23">PID-500TPD-TK101-002</text>
+                      
+                      <text x="170" y="63" font-size="8" fill="#64748b">REV:</text>
+                      <text x="170" y="77" font-size="9" font-weight="bold" fill="#0b3d23">0 (APROBADO)</text>
+                      
+                      <text x="250" y="63" font-size="8" fill="#64748b">ESCALA:</text>
+                      <text x="250" y="77" font-size="9" font-weight="bold" fill="#0b3d23">S/E (NTS)</text>
+                      
+                      <text x="10" y="98" font-size="8" fill="#64748b">ELABOR : E. Gonz lez / L. Arias</text>
+                      <text x="10" y="113" font-size="8" fill="#64748b">FECHA: Octubre 2026 &bull; HOJA: 2 de 2</text>
+
+                      <text x="170" y="98" font-size="8" fill="#64748b">REVIS : C tedra Dise o Plantas</text>
+                      <text x="170" y="113" font-size="8" fill="#64748b">APROB : Comit  Curricular IQ</text>
+                    </g>
+                  </svg>
+                </div>
+              </div>
+
+              <!-- Ficha T cnica Lazo Cr tico TK-101 -->
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+                <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm space-y-1.5">
+                  <span class="text-[10px] font-mono font-bold text-[#e5a93b] uppercase">Variables del Lazo AIC-101</span>
+                  <h4 class="font-extrabold text-[#0b3d23] text-sm">Control de Concentraci n</h4>
+                  <p class="text-slate-700 text-[11px]">&bull; <strong>Variable Controlada (PV):</strong> Concentraci n de H<sub>2</sub>SO<sub>4</sub> en c ntara (98.4 &plusmn; 0.1% wt).</p>
+                  <p class="text-slate-700 text-[11px]">&bull; <strong>Variable Manipulada (MV):</strong> Caudal de agua desmineralizada inyectada mediante v lvula FV-28 (0 &ndash; 12 m<sup>3</sup>/h).</p>
+                  <p class="text-slate-700 text-[11px]">&bull; <strong>Perturbaciones (DV):</strong> Variaci n de producci n de SO<sub>3</sub> en torres, temperatura de retorno y fluctuaci n de presi n en red de agua.</p>
+                </div>
+
+                <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm space-y-1.5">
+                  <span class="text-[10px] font-mono font-bold text-[#e5a93b] uppercase">Justificaci n Tecnol gica</span>
+                  <h4 class="font-extrabold text-[#0b3d23] text-sm">Densidad Coriolis vs. Conductividad</h4>
+                  <p class="text-slate-700 text-[11px]">&bull; <strong>Sensor:</strong> Medidor Coriolis de tubo recto de aleaci n Hastelloy C-276 (densidad directa &plusmn; 0.0005 g/cm<sup>3</sup>). La conductividad se aplana entre 97.5 &ndash; 99%, por lo que Coriolis es indispensable.</p>
+                  <p class="text-slate-700 text-[11px]">&bull; <strong>Nivel:</strong> Radar de onda guiada LT-101 con sonda coaxial de PTFE, inmune a ebullici n  cida y vapores condensables.</p>
+                  <p class="text-slate-700 text-[11px]">&bull; <strong>Falla Segura:</strong> FV-28 y ESDV-28 son <strong>Fail-Closed (FC)</strong>, impidiendo inundaci n de agua ante p rdida de aire/energ a.</p>
+                </div>
+
+                <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm space-y-1.5">
+                  <span class="text-[10px] font-mono font-bold text-red-600 uppercase">Seguridad SIS &amp; Alarmas</span>
+                  <h4 class="font-extrabold text-red-800 text-sm">SIF-02 (SIL-2) Interlock C ntara</h4>
+                  <p class="text-slate-700 text-[11px]">&bull; <strong>Alarmas BPCS:</strong> ACAL-101 (97.8%), ACAH-101 (98.8%), LAL-101 (35%), LAH-101 (75%).</p>
+                  <p class="text-slate-700 text-[11px]">&bull; <strong>Disparo SIS (ACLL-101):</strong> &le; 95.0% wt o Nivel &ge; 85% (LSHH-101).</p>
+                  <p class="text-slate-700 text-[11px]">&bull; <strong>Acci n Protectora:</strong> Desenergizaci n solenoide de ESDV-28 (&lt; 1.5 s FC) y enclavamiento de bombas P-101 para evitar da o corrosivo a torres.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- TAB 3: MATRIZ INTEGRADA DE INSTRUMENTACI N ISA -->
+            <div id="tab-pid-matriz" class="tab-pane hidden space-y-3">
+              <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                <h3 class="text-xs font-black text-[#0b3d23] uppercase mb-3 flex items-center justify-between">
+                  <span>Matriz Normalizada de Instrumentaci n ISA-5.1 &bull; Nodos R-101 y TK-101</span>
+                  <span class="text-[10px] font-mono bg-slate-100 px-2 py-0.5 rounded text-slate-700">Trazabilidad Total con P&amp;ID, Narrativa, HAZOP y FTA</span>
+                </h3>
+
+                <div class="overflow-x-auto">
+                  <table class="w-full hazid-table border-collapse">
+                    <thead>
+                      <tr>
+                        <th>Tag ISA</th>
+                        <th>Nodo / Equipo</th>
+                        <th>Variable / Funci n</th>
+                        <th>Tecnolog a / Elemento</th>
+                        <th>Rango Operativo</th>
+                        <th>Setpoints / Umbrales</th>
+                        <th>Falla Segura</th>
+                        <th>Capa Control</th>
+                        <th>SIL / Clasif.</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td class="font-mono font-bold text-[#0b3d23]">TIT-101A/B/C</td>
+                        <td>R-101 (Lecho 1)</td>
+                        <td>Temperatura interna lecho catal tico</td>
+                        <td>Termocupla Tipo K multipunto (vaina Inconel 600)</td>
+                        <td>0 &ndash; 800 &deg;C</td>
+                        <td>Normal: 605 &deg;C | TAH: 615 &deg;C | TSHH: 630 &deg;C</td>
+                        <td>Upscale (&gt;800 &deg;C)</td>
+                        <td>SIS (2oo3)</td>
+                        <td><span class="badge-critical px-1.5 py-0.5 rounded text-[10px]">SIL-2</span></td>
+                      </tr>
+                      <tr>
+                        <td class="font-mono font-bold text-[#0b3d23]">TIC-101</td>
+                        <td>WHB-101 / R-101</td>
+                        <td>Controlador temp. entrada a Lecho 1</td>
+                        <td>Algoritmo PID digital en DCS con filtro de ruido</td>
+                        <td>350 &ndash; 500 &deg;C</td>
+                        <td>SP: 420 &plusmn; 5 &deg;C | TAL: 410 &deg;C | TAH: 435 &deg;C</td>
+                        <td>Salida a 0%</td>
+                        <td>BPCS (DCS)</td>
+                        <td><span class="badge-low px-1.5 py-0.5 rounded text-[10px]">BPCS</span></td>
+                      </tr>
+                      <tr>
+                        <td class="font-mono font-bold text-[#0b3d23]">TV-101</td>
+                        <td>Bypass WHB-101</td>
+                        <td>V lvula de control mariposa para bypass</td>
+                        <td>V lvula mariposa alta temp. actuador neum tico</td>
+                        <td>0 &ndash; 100% apertura</td>
+                        <td>Operaci n t pica: 15 &ndash; 25% apertura</td>
+                        <td><strong>Fail-Closed (FC)</strong></td>
+                        <td>BPCS (DCS)</td>
+                        <td><span class="badge-low px-1.5 py-0.5 rounded text-[10px]">Elemento Final</span></td>
+                      </tr>
+                      <tr>
+                        <td class="font-mono font-bold text-red-700">ESDV-01</td>
+                        <td>L nea Azufre B-101</td>
+                        <td>V lvula de corte de emergencia de azufre</td>
+                        <td>V lvula bola trunnion metal-metal con resorte</td>
+                        <td>Abierta / Cerrada</td>
+                        <td>Tiempo de cierre &lt; 2.0 s certificado</td>
+                        <td><strong>Fail-Closed (FC)</strong></td>
+                        <td>SIS (SIF-01)</td>
+                        <td><span class="badge-critical px-1.5 py-0.5 rounded text-[10px]">SIL-2 / SIF-01</span></td>
+                      </tr>
+                      <tr>
+                        <td class="font-mono font-bold text-sky-700">FV-101Q</td>
+                        <td>L nea Quench R-101</td>
+                        <td>V lvula inyecci n aire quench r pido</td>
+                        <td>Globo criog nico/seco con actuador resorte</td>
+                        <td>0 &ndash; 100% apertura</td>
+                        <td>Abierta al 100% por disparo de TSHH-101</td>
+                        <td><strong>Fail-Open (FO)</strong></td>
+                        <td>SIS / BPCS</td>
+                        <td><span class="badge-high px-1.5 py-0.5 rounded text-[10px]">SIL-2 / SIF-01</span></td>
+                      </tr>
+                      <tr>
+                        <td class="font-mono font-bold text-[#0b3d23]">AT-101A/B</td>
+                        <td>Descarga TK-101</td>
+                        <td>Transmisor concentraci n H2SO4</td>
+                        <td>Dens metro de masa Coriolis (tubo Hastelloy C-276)</td>
+                        <td>90 &ndash; 100% wt H2SO4</td>
+                        <td>Normal: 98.4% | ACAL: 97.8% | ACLL: 95.0%</td>
+                        <td>Downscale (&lt;90%)</td>
+                        <td>BPCS + SIS</td>
+                        <td><span class="badge-critical px-1.5 py-0.5 rounded text-[10px]">SIL-2</span></td>
+                      </tr>
+                      <tr>
+                        <td class="font-mono font-bold text-[#0b3d23]">AIC-101</td>
+                        <td>C ntara TK-101</td>
+                        <td>Controlador concentraci n de  cido</td>
+                        <td>Algoritmo PID con compensaci n por temperatura</td>
+                        <td>90 &ndash; 100% wt</td>
+                        <td>Set Point: 98.4 &plusmn; 0.1% wt</td>
+                        <td>Corte agua (0%)</td>
+                        <td>BPCS (DCS)</td>
+                        <td><span class="badge-low px-1.5 py-0.5 rounded text-[10px]">BPCS</span></td>
+                      </tr>
+                      <tr>
+                        <td class="font-mono font-bold text-sky-700">FV-28</td>
+                        <td>Agua Diluci n [28]</td>
+                        <td>V lvula de modulaci n de agua desmin.</td>
+                        <td>V lvula de globo micro-flujo con posicionador</td>
+                        <td>0 &ndash; 12 m3/h</td>
+                        <td>Modulaci n continua en funci n de AIC-101</td>
+                        <td><strong>Fail-Closed (FC)</strong></td>
+                        <td>BPCS (DCS)</td>
+                        <td><span class="badge-low px-1.5 py-0.5 rounded text-[10px]">Elemento Final</span></td>
+                      </tr>
+                      <tr>
+                        <td class="font-mono font-bold text-red-700">ESDV-28</td>
+                        <td>Agua Diluci n [28]</td>
+                        <td>V lvula de corte r pido de emergencia</td>
+                        <td>Bola bridada Clase 300 con solenoide SIL-3</td>
+                        <td>Abierta / Cerrada</td>
+                        <td>Disparo inmediato por ACLL-101 o LSHH-101</td>
+                        <td><strong>Fail-Closed (FC)</strong></td>
+                        <td>SIS (SIF-02)</td>
+                        <td><span class="badge-critical px-1.5 py-0.5 rounded text-[10px]">SIL-2 / SIF-02</span></td>
+                      </tr>
+                      <tr>
+                        <td class="font-mono font-bold text-[#0b3d23]">LT-101 / LSHH</td>
+                        <td>C ntara TK-101</td>
+                        <td>Nivel continuo y switch de nivel muy alto</td>
+                        <td>Radar onda guiada (GWR) coaxial PTFE</td>
+                        <td>0 &ndash; 100% nivel</td>
+                        <td>Normal: 60% | LAL: 35% | LAH: 75% | LSHH: 85%</td>
+                        <td>High Level Alarm</td>
+                        <td>BPCS + SIS</td>
+                        <td><span class="badge-critical px-1.5 py-0.5 rounded text-[10px]">SIL-2</span></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        `
+      },
+      {
+        id: "narrativa-control",
+        title: "2. Narrativa de Control y Desviaciones Cr ticas",
+        render: () => `
+          <div class="space-y-4" id="narrativaTabsContainer">
+            <!-- Header diapositiva -->
+            <div class="border-b border-slate-200 pb-2.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div>
+                <span class="text-xs font-bold uppercase tracking-wider text-[#e5a93b]">M dulo 2 &bull; Operaci n &amp; Seguridad de Procesos</span>
+                <h2 class="text-xl sm:text-2xl font-black text-[#0b3d23]">Narrativa de Control y Respuesta ante Desviaciones Cr ticas</h2>
+              </div>
+              <div class="flex items-center space-x-1.5 bg-slate-100 p-1 rounded-xl border border-slate-200 self-start sm:self-auto">
+                <button onclick="switchTab('narrativaTabsContainer', 'tab-nar-nodo1')" data-target="tab-nar-nodo1" class="tab-btn px-3 py-1 rounded-lg text-xs font-bold border transition-all tab-active">
+                  Nodo 1: Convertidor R-101
+                </button>
+                <button onclick="switchTab('narrativaTabsContainer', 'tab-nar-nodo2')" data-target="tab-nar-nodo2" class="tab-btn px-3 py-1 rounded-lg text-xs font-bold border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 transition-all">
+                  Nodo 2: C ntara TK-101
+                </button>
+                <button onclick="switchTab('narrativaTabsContainer', 'tab-nar-capas')" data-target="tab-nar-capas" class="tab-btn px-3 py-1 rounded-lg text-xs font-bold border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 transition-all">
+                  BPCS vs. SIS &amp; ISA-18.2
+                </button>
+              </div>
+            </div>
+
+            <!-- TAB 1: NARRATIVA NODO 1 R-101 -->
+            <div id="tab-nar-nodo1" class="tab-pane space-y-4">
+              <!-- Operaci n Normal vs Desviaci n Cr tica -->
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Operaci n Normal -->
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-2.5">
+                  <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+                    <span class="text-xs font-extrabold text-[#0b3d23] uppercase flex items-center space-x-1.5">
+                      <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                      <span>Operaci n Normal &bull; Nodo R-101</span>
+                    </span>
+                    <span class="text-[10px] font-mono font-bold bg-emerald-50 text-emerald-800 px-2 py-0.5 rounded">R gimen Estable</span>
+                  </div>
+                  <p class="text-slate-700 text-xs leading-relaxed">
+                    El gas procedente de la combusti n de azufre ingresa a la etapa de conversi n conteniendo <strong>10.5 &ndash; 11.2% vol. de SO<sub>2</sub></strong> y <strong>9.5 &ndash; 10.0% vol. de O<sub>2</sub></strong>. Para iniciar la cat lisis exot rmica sobre el catalizador de pent xido de vanadio (V<sub>2</sub>O<sub>5</sub> / Cs), la corriente debe mantenerse rigurosamente a <strong>420 &plusmn; 5 &deg;C</strong>.
+                  </p>
+                  <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200 text-xs space-y-1">
+                    <p><strong>Lazo BPCS Activo (TIC-101):</strong> El transmisor TIT-101 mide la mezcla de gas y modula la v lvula mariposa de bypass TV-101 (apertura nominal 18%). Si la temperatura desciende, TV-101 abre permitiendo que m s gas caliente baipasee el WHB-101; si sube, cierra enviando m s gas por la caldera.</p>
+                    <p><strong>Din mica Interna:</strong> La reacci n en Lecho 1 alcanza un 60 &ndash; 64% de conversi n adiab tica, elevando la temperatura del gas hasta <strong>600 &ndash; 610 &deg;C</strong> a la salida de la masa catal tica.</p>
+                  </div>
+                </div>
+
+                <!-- Cadena de Desviaci n Cr tica -->
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-2.5">
+                  <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+                    <span class="text-xs font-extrabold text-red-700 uppercase flex items-center space-x-1.5">
+                      <span class="w-2.5 h-2.5 rounded-full bg-red-600"></span>
+                      <span>Cadena de Desviaci n Cr tica &bull; Nodo R-101</span>
+                    </span>
+                    <span class="text-[10px] font-mono font-bold bg-red-50 text-red-800 px-2 py-0.5 rounded">Sobretemperatura &gt;630 &deg;C</span>
+                  </div>
+                  <div class="space-y-1.5 text-xs text-slate-700">
+                    <div class="p-2 bg-red-50/70 rounded-lg border border-red-100">
+                      <strong class="text-red-900 block text-[11px] uppercase">1. Causa Ra z</strong>
+                      Fallo de combusti n en horno B-101 que eleva SO<sub>2</sub> &gt; 12.5% vol., o bloqueo mec nico de TV-101 al 100% abierta (m ximo bypass caliente sin refrigeraci n).
+                    </div>
+                    <div class="p-2 bg-slate-50 rounded-lg border border-slate-200">
+                      <strong class="text-slate-800 block text-[11px] uppercase">2. Efecto F sico-Qu mico</strong>
+                      Exotermia descontrolada en Lecho 1; la temperatura asciende a raz n de +1.2 &deg;C/s superando 620 &deg;C. A T &gt; 630 &deg;C ocurre sinterizaci n irreversible de la sal activa K<sub>3</sub>VO<sub>2</sub>(SO<sub>4</sub>)<sub>2</sub> y degradaci n por fluencia t rmica en la carcasa SS304H.
+                    </div>
+                    <div class="p-2 bg-amber-50 rounded-lg border border-amber-200">
+                      <strong class="text-amber-900 block text-[11px] uppercase">3. Acci n del Operador &amp; Respuesta Esperada</strong>
+                      Alarma TAH-101 a <strong>615 &deg;C</strong> (Prioridad 2). El operador conmuta TIC-101 a Modo Manual, comanda cierre forzado de TV-101 y habilita inyecci n manual de quench FV-101Q. Ventana de intervenci n: <strong>&lt; 3 minutos</strong>.
+                    </div>
+                    <div class="p-2 bg-red-100/70 rounded-lg border border-red-300">
+                      <strong class="text-red-950 block text-[11px] uppercase">4. Activaci n del SIS Independiente (SIF-01)</strong>
+                      Si la temperatura alcanza <strong>630 &deg;C</strong> (TSHH-101), la l gica 2oo3 dispara enclavamiento SIF-01: cierre de ESDV-01 de azufre en <strong>&lt; 2.0 s</strong> y apertura total de FV-101Q (quench).
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Diagrama L gico de Decisi n, Permisivos y Temporizaci n SVG -->
+              <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                <div class="flex items-center justify-between pb-2 mb-2 border-b border-slate-100">
+                  <h3 class="text-xs font-black text-[#0b3d23] uppercase">Diagrama L gico de Decisi n, Permisos &amp; Temporizaci n &bull; SIF-01</h3>
+                  <span class="text-[10px] font-mono text-slate-500">L gica de Seguridad Fail-Safe (IEC 61511 / ISA-84)</span>
+                </div>
+
+                <div class="w-full bg-slate-50 rounded-xl border border-slate-200 p-3 overflow-x-auto">
+                  <svg viewBox="0 0 920 180" class="w-full min-w-[800px] h-auto select-none" style="font-family:'JetBrains Mono',monospace;">
+                    <!-- Bloque 1: Lectura Sensores 2oo3 -->
+                    <rect x="10" y="50" width="130" height="70" rx="8" fill="#ffffff" stroke="#0b3d23" stroke-width="2"/>
+                    <text x="75" y="75" font-size="9" font-weight="bold" fill="#0b3d23" text-anchor="middle">TIT-101A/B/C</text>
+                    <text x="75" y="90" font-size="8" fill="#64748b" text-anchor="middle">Sensores Multipunto</text>
+                    <text x="75" y="105" font-size="8" fill="#0b3d23" font-weight="bold" text-anchor="middle">L gica 2oo3</text>
+
+                    <!-- Flecha a Decisi n 1 -->
+                    <line x1="140" y1="85" x2="190" y2="85" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+
+                    <!-- Rombo Decisi n 1: T > 615 C -->
+                    <polygon points="240,45 290,85 240,125 190,85" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+                    <text x="240" y="80" font-size="8" font-weight="bold" fill="#92400e" text-anchor="middle"> T &gt; 615 C?</text>
+                    <text x="240" y="93" font-size="7" fill="#b45309" text-anchor="middle">(TAH-101)</text>
+
+                    <!-- Rama NO (Operaci n Normal) -->
+                    <line x1="240" y1="45" x2="240" y2="20" stroke="#16a34a" stroke-width="1.5"/>
+                    <line x1="240" y1="20" x2="110" y2="20" stroke="#16a34a" stroke-width="1.5"/>
+                    <line x1="110" y1="20" x2="110" y2="50" stroke="#16a34a" stroke-width="1.5" marker-end="url(#arrow)"/>
+                    <text x="175" y="15" font-size="8" font-weight="bold" fill="#16a34a">NO &rarr; Control BPCS (TIC-101 Auto)</text>
+
+                    <!-- Rama SI hacia Alarma Nivel 2 y Timer -->
+                    <line x1="290" y1="85" x2="340" y2="85" stroke="#d97706" stroke-width="2" marker-end="url(#arrow)"/>
+                    <text x="310" y="78" font-size="8" font-weight="bold" fill="#b45309">S </text>
+
+                    <!-- Bloque Alarma Operador & Timer 180s -->
+                    <rect x="340" y="55" width="130" height="60" rx="8" fill="#fffbeb" stroke="#d97706" stroke-width="1.5"/>
+                    <text x="405" y="75" font-size="8" font-weight="bold" fill="#b45309" text-anchor="middle">ALARMA PRIORIDAD 2</text>
+                    <text x="405" y="89" font-size="7" fill="#475569" text-anchor="middle">Intervenci n Operador</text>
+                    <text x="405" y="103" font-size="8" font-weight="bold" fill="#b45309" text-anchor="middle">Timer: &le; 180 s</text>
+
+                    <!-- Flecha a Decisi n 2 (TSHH) -->
+                    <line x1="470" y1="85" x2="520" y2="85" stroke="#dc2626" stroke-width="2" marker-end="url(#arrow)"/>
+
+                    <!-- Rombo Decisi n 2: T >= 630 C o Timer expirado -->
+                    <polygon points="580,45 640,85 580,125 520,85" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+                    <text x="580" y="80" font-size="8" font-weight="bold" fill="#991b1b" text-anchor="middle"> T &ge; 630 C?</text>
+                    <text x="580" y="93" font-size="7" fill="#b91c1c" text-anchor="middle">(TSHH 2oo3)</text>
+
+                    <!-- Rama SI a Disparo SIS -->
+                    <line x1="640" y1="85" x2="690" y2="85" stroke="#dc2626" stroke-width="2.5" marker-end="url(#arrow-red)"/>
+                    <text x="660" y="78" font-size="8" font-weight="bold" fill="#dc2626">S </text>
+
+                    <!-- Bloque DISPARO SIS SIF-01 -->
+                    <rect x="690" y="45" width="210" height="80" rx="8" fill="#fef2f2" stroke="#b91c1c" stroke-width="2.5"/>
+                    <text x="795" y="65" font-size="9" font-weight="bold" fill="#991b1b" text-anchor="middle">DISPARO SIS &bull; SIF-01 (SIL-2)</text>
+                    <text x="795" y="80" font-size="8" font-weight="bold" fill="#dc2626" text-anchor="middle">1. Cierre ESDV-01 azufre (&lt;2.0 s, FC)</text>
+                    <text x="795" y="95" font-size="8" font-weight="bold" fill="#0284c7" text-anchor="middle">2. Apertura FV-101Q quench (FO)</text>
+                    <text x="795" y="112" font-size="7" font-weight="bold" fill="#475569" text-anchor="middle">Bloqueo Rearme Manual (T &lt; 450 C + Purga)</text>
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            <!-- TAB 2: NARRATIVA NODO 2 TK-101 -->
+            <div id="tab-nar-nodo2" class="tab-pane hidden space-y-4">
+              <!-- Operaci n Normal vs Desviaci n Cr tica TK-101 -->
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Operaci n Normal -->
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-2.5">
+                  <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+                    <span class="text-xs font-extrabold text-[#0b3d23] uppercase flex items-center space-x-1.5">
+                      <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                      <span>Operaci n Normal &bull; C ntara TK-101</span>
+                    </span>
+                    <span class="text-[10px] font-mono font-bold bg-emerald-50 text-emerald-800 px-2 py-0.5 rounded">Absorci n Estable</span>
+                  </div>
+                  <p class="text-slate-700 text-xs leading-relaxed">
+                    La c ntara TK-101 recibe el  cido concentrado de retorno de las torres de absorci n intermedia T-201 y final T-202 a <strong>98.6% wt</strong> y <strong>82 &deg;C</strong>. Su objetivo es mezclar, dosificar agua desmineralizada de diluci n para mantener la concentraci n  ptima en <strong>98.4 &plusmn; 0.1% wt</strong> y enfriar el  cido en E-101 hasta <strong>75 &deg;C</strong> para recirculaci n.
+                  </p>
+                  <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200 text-xs space-y-1">
+                    <p><strong>Lazo de Concentraci n (AIC-101):</strong> El dens metro Coriolis AT-101A mide continuamente la densidad (1.8315 g/cm<sup>3</sup> a 75 &deg;C) y modula la v lvula de globo FV-28 inyectando entre 4 y 7 m<sup>3</sup>/h de agua desmineralizada.</p>
+                    <p><strong>Control de Nivel (LIC-101):</strong> Mantiene la c ntara al <strong>60% de capacidad</strong> regulando el caudal impulsado por las bombas P-101A/B hacia las torres.</p>
+                  </div>
+                </div>
+
+                <!-- Desviaci n Cr tica Diluci n -->
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-2.5">
+                  <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+                    <span class="text-xs font-extrabold text-amber-700 uppercase flex items-center space-x-1.5">
+                      <span class="w-2.5 h-2.5 rounded-full bg-amber-600"></span>
+                      <span>Cadena de Desviaci n Cr tica &bull; Nodo TK-101</span>
+                    </span>
+                    <span class="text-[10px] font-mono font-bold bg-amber-50 text-amber-800 px-2 py-0.5 rounded">Diluci n Descontrolada &lt;95%</span>
+                  </div>
+                  <div class="space-y-1.5 text-xs text-slate-700">
+                    <div class="p-2 bg-amber-50/70 rounded-lg border border-amber-100">
+                      <strong class="text-amber-900 block text-[11px] uppercase">1. Causa Ra z</strong>
+                      Rotura de membrana o fallo del posicionador de FV-28 abierta al 100%, o corte imprevisto de la recirculaci n de  cido desde torres manteniendo la inyecci n de agua.
+                    </div>
+                    <div class="p-2 bg-slate-50 rounded-lg border border-slate-200">
+                      <strong class="text-slate-800 block text-[11px] uppercase">2. Efecto F sico-Qu mico</strong>
+                      La concentraci n cae por debajo de 95%. La entalp a de diluci n (&Delta;H<sub>dil</sub> &approx; &minus;100 kJ/mol) desata ebullici n  cida localizada, generaci n violenta de vapores t xicos de SO<sub>3</sub> / H<sub>2</sub>SO<sub>4</sub> y corrosi n hiperacelerada en bombas y tanques.
+                    </div>
+                    <div class="p-2 bg-amber-50 rounded-lg border border-amber-200">
+                      <strong class="text-amber-900 block text-[11px] uppercase">3. Acci n del Operador &amp; Respuesta Esperada</strong>
+                      Alarmas ACAL-101 a <strong>97.8%</strong> y TAH a <strong>85 &deg;C</strong>. El operador pasa AIC-101 a Manual y cierra FV-28. Ventana de intervenci n: <strong>&lt; 2 minutos</strong>.
+                    </div>
+                    <div class="p-2 bg-red-100/70 rounded-lg border border-red-300">
+                      <strong class="text-red-950 block text-[11px] uppercase">4. Activaci n del SIS Independiente (SIF-02)</strong>
+                      Si la concentraci n alcanza <strong>95.0% wt</strong> (ACLL-101) o el nivel sube a <strong>85%</strong> (LSHH-101), el lazo SIF-02 desenergiza el solenoide cerrando ESDV-28 en <strong>&lt; 1.5 s</strong> (Fail-Closed con resorte).
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Diagrama L gico de Decisi n TK-101 -->
+              <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                <div class="flex items-center justify-between pb-2 mb-2 border-b border-slate-100">
+                  <h3 class="text-xs font-black text-[#0b3d23] uppercase">Diagrama L gico de Decisi n, Permisos &amp; Temporizaci n &bull; SIF-02</h3>
+                  <span class="text-[10px] font-mono text-slate-500">Enclavamiento de Diluci n Segura y Parada de Bombas (IEC 61511)</span>
+                </div>
+
+                <div class="w-full bg-slate-50 rounded-xl border border-slate-200 p-3 overflow-x-auto">
+                  <svg viewBox="0 0 920 180" class="w-full min-w-[800px] h-auto select-none" style="font-family:'JetBrains Mono',monospace;">
+                    <!-- Bloque Sensores TK-101 -->
+                    <rect x="10" y="50" width="140" height="70" rx="8" fill="#ffffff" stroke="#0b3d23" stroke-width="2"/>
+                    <text x="80" y="73" font-size="9" font-weight="bold" fill="#0b3d23" text-anchor="middle">AT-101A/B &bull; LT-101</text>
+                    <text x="80" y="88" font-size="8" fill="#64748b" text-anchor="middle">Coriolis &amp; Radar GWR</text>
+                    <text x="80" y="103" font-size="8" fill="#0b3d23" font-weight="bold" text-anchor="middle">Monitoreo Redundante</text>
+
+                    <!-- Flecha a Decisi n 1 -->
+                    <line x1="150" y1="85" x2="200" y2="85" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+
+                    <!-- Rombo 1: Desviaci n leve -->
+                    <polygon points="250,45 305,85 250,125 195,85" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+                    <text x="250" y="80" font-size="8" font-weight="bold" fill="#92400e" text-anchor="middle"> Conc &lt; 97.8%?</text>
+                    <text x="250" y="93" font-size="7" fill="#b45309" text-anchor="middle">o Nivel &gt; 75%</text>
+
+                    <!-- Rama NO -->
+                    <line x1="250" y1="45" x2="250" y2="20" stroke="#16a34a" stroke-width="1.5"/>
+                    <line x1="250" y1="20" x2="110" y2="20" stroke="#16a34a" stroke-width="1.5"/>
+                    <line x1="110" y1="20" x2="110" y2="50" stroke="#16a34a" stroke-width="1.5" marker-end="url(#arrow)"/>
+                    <text x="180" y="15" font-size="8" font-weight="bold" fill="#16a34a">NO &rarr; Control BPCS Normal (FV-28 modulando)</text>
+
+                    <!-- Rama SI -->
+                    <line x1="305" y1="85" x2="350" y2="85" stroke="#d97706" stroke-width="2" marker-end="url(#arrow)"/>
+                    <text x="325" y="78" font-size="8" font-weight="bold" fill="#b45309">S </text>
+
+                    <!-- Bloque Alarma Operativa 120s -->
+                    <rect x="350" y="55" width="130" height="60" rx="8" fill="#fffbeb" stroke="#d97706" stroke-width="1.5"/>
+                    <text x="415" y="75" font-size="8" font-weight="bold" fill="#b45309" text-anchor="middle">ALARMA OPERATIVA</text>
+                    <text x="415" y="89" font-size="7" fill="#475569" text-anchor="middle">AIC-101 a Manual</text>
+                    <text x="415" y="103" font-size="8" font-weight="bold" fill="#b45309" text-anchor="middle">Timer: &le; 120 s</text>
+
+                    <!-- Flecha a Decisi n SIS -->
+                    <line x1="480" y1="85" x2="530" y2="85" stroke="#dc2626" stroke-width="2" marker-end="url(#arrow)"/>
+
+                    <!-- Rombo SIS: Conc <= 95% o Nivel >= 85% -->
+                    <polygon points="590,45 655,85 590,125 525,85" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+                    <text x="590" y="78" font-size="8" font-weight="bold" fill="#991b1b" text-anchor="middle"> Conc &le; 95%?</text>
+                    <text x="590" y="92" font-size="7" fill="#b91c1c" text-anchor="middle">o Nivel &ge; 85%</text>
+
+                    <!-- Rama SI a Disparo SIF-02 -->
+                    <line x1="655" y1="85" x2="700" y2="85" stroke="#dc2626" stroke-width="2.5" marker-end="url(#arrow-red)"/>
+                    <text x="675" y="78" font-size="8" font-weight="bold" fill="#dc2626">S </text>
+
+                    <!-- Bloque DISPARO SIS SIF-02 -->
+                    <rect x="700" y="45" width="205" height="80" rx="8" fill="#fef2f2" stroke="#b91c1c" stroke-width="2.5"/>
+                    <text x="802" y="65" font-size="9" font-weight="bold" fill="#991b1b" text-anchor="middle">DISPARO SIS &bull; SIF-02 (SIL-2)</text>
+                    <text x="802" y="80" font-size="8" font-weight="bold" fill="#dc2626" text-anchor="middle">1. Cierre ESDV-28 agua (&lt;1.5 s, FC)</text>
+                    <text x="802" y="95" font-size="8" font-weight="bold" fill="#991b1b" text-anchor="middle">2. Interlock paro bombas P-101A/B</text>
+                    <text x="802" y="112" font-size="7" font-weight="bold" fill="#475569" text-anchor="middle">Rearme manual bajo protocolo</text>
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            <!-- TAB 3: BPCS VS SIS & ALARMAS ISA-18.2 -->
+            <div id="tab-nar-capas" class="tab-pane hidden space-y-4">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                <!-- Comparativa Funcional -->
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+                  <h3 class="text-xs font-black text-[#0b3d23] uppercase border-b border-slate-100 pb-2">
+                    Diferenciaci n Arquitect nica: BPCS vs. SIS
+                  </h3>
+                  <div class="p-3 bg-blue-50/70 rounded-xl border border-blue-200 space-y-1">
+                    <strong class="text-blue-900 block font-bold">1. Control B sico de Procesos (BPCS / DCS)</strong>
+                    <p class="text-slate-700 text-[11px]">&bull; <strong>Objetivo:</strong> Mantener variables dentro de la ventana de operaci n econ mica y de calidad (IOW).</p>
+                    <p class="text-slate-700 text-[11px]">&bull; <strong>Hardware:</strong> Controladores DCS Yokogawa Centum / Emerson DeltaV redundantes comunes.</p>
+                    <p class="text-slate-700 text-[11px]">&bull; <strong>Tiempo de Respuesta:</strong> 1 a 5 segundos (lazos PID convencionales).</p>
+                    <p class="text-slate-700 text-[11px]">&bull; <strong>Filosof a de Falla:</strong> Fail-Stationary o Fail-Safe a posici n reguladora.</p>
+                  </div>
+
+                  <div class="p-3 bg-red-50/70 rounded-xl border border-red-200 space-y-1">
+                    <strong class="text-red-900 block font-bold">2. Sistema Instrumentado de Seguridad (SIS / Triconex SIL-2/3)</strong>
+                    <p class="text-slate-700 text-[11px]">&bull; <strong>Objetivo:</strong> Llevar la planta a un estado seguro e impedir eventos catastr ficos.</p>
+                    <p class="text-slate-700 text-[11px]">&bull; <strong>Hardware:</strong> Controlador de l gica de seguridad dedicado con certificaci n T V y votaci n triple modular (TMR).</p>
+                    <p class="text-slate-700 text-[11px]">&bull; <strong>Independencia:</strong> Sensores, solenoides y actuadores <strong>f sicamente desacoplados</strong> del BPCS (IEC 61511).</p>
+                    <p class="text-slate-700 text-[11px]">&bull; <strong>Tiempo de Disparo:</strong> &lt; 2.0 s garantizado bajo demanda.</p>
+                  </div>
+                </div>
+
+                <!-- Jerarqu a de Alarmas ISA-18.2 -->
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+                  <h3 class="text-xs font-black text-[#0b3d23] uppercase border-b border-slate-100 pb-2">
+                    Jerarqu a y Gesti n de Alarmas (ANSI/ISA-18.2)
+                  </h3>
+
+                  <div class="space-y-2">
+                    <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200">
+                      <div class="flex items-center justify-between mb-1">
+                        <strong class="text-slate-700 font-bold">Prioridad 3: Informativa / Advertencia Baja</strong>
+                        <span class="text-[10px] font-mono bg-slate-200 text-slate-700 px-1.5 py-0.5 rounded font-bold">> 30 min respuesta</span>
+                      </div>
+                      <p class="text-slate-600 text-[11px]">Desviaciones leves que no comprometen la seguridad ni la integridad del equipo. Ej: Notificaci n de inicio de filtro en soplador BL-101 o nivel de c ntara al 68%.</p>
+                    </div>
+
+                    <div class="p-2.5 bg-amber-50 rounded-xl border border-amber-200">
+                      <div class="flex items-center justify-between mb-1">
+                        <strong class="text-amber-900 font-bold">Prioridad 2: Operativa / Intervenci n Media</strong>
+                        <span class="text-[10px] font-mono bg-amber-200 text-amber-900 px-1.5 py-0.5 rounded font-bold">&lt; 10 min respuesta</span>
+                      </div>
+                      <p class="text-slate-700 text-[11px]">Requiere acci n correctiva del operador para evitar el disparo de protecciones. Ej: TAH-101 a 615 &deg;C en Lecho 1, ACAL-101 a 97.8% de H<sub>2</sub>SO<sub>4</sub>.</p>
+                    </div>
+
+                    <div class="p-2.5 bg-red-50 rounded-xl border border-red-200">
+                      <div class="flex items-center justify-between mb-1">
+                        <strong class="text-red-900 font-bold">Prioridad 1: Cr tica / Disparo de Seguridad SIS</strong>
+                        <span class="text-[10px] font-mono bg-red-200 text-red-900 px-1.5 py-0.5 rounded font-bold">&lt; 2 s autom tica</span>
+                      </div>
+                      <p class="text-slate-700 text-[11px]">Acci n automatizada inmediata sin esperar al operador. Enclavamiento de emergencia de hardware. Ej: TSHH-101 a 630 &deg;C (SIF-01), ACLL-101 a 95.0% (SIF-02).</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `
+      },
+      {
+        id: "hazop-analisis",
+        title: "3. An lisis HAZOP y Evaluaci n de Riesgos",
+        render: () => `
+          <div class="space-y-4" id="hazopTabsContainer">
+            <!-- Header diapositiva -->
+            <div class="border-b border-slate-200 pb-2.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div>
+                <span class="text-xs font-bold uppercase tracking-wider text-[#e5a93b]">M dulo 3 &bull; Identificaci n de Peligros &amp; Riesgos</span>
+                <h2 class="text-xl sm:text-2xl font-black text-[#0b3d23]">An lisis de Riesgo y Operabilidad (HAZOP &bull; IEC 61882)</h2>
+              </div>
+              <div class="flex items-center space-x-1.5 bg-slate-100 p-1 rounded-xl border border-slate-200 self-start sm:self-auto">
+                <button onclick="switchTab('hazopTabsContainer', 'tab-hzp-nodo1')" data-target="tab-hzp-nodo1" class="tab-btn px-3 py-1 rounded-lg text-xs font-bold border transition-all tab-active">
+                  HAOP Nodo 1: R-101
+                </button>
+                <button onclick="switchTab('hazopTabsContainer', 'tab-hzp-nodo2')" data-target="tab-hzp-nodo2" class="tab-btn px-3 py-1 rounded-lg text-xs font-bold border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 transition-all">
+                  HAZOP Nodo 2: TK-101
+                </button>
+                <button onclick="switchTab('hazopTabsContainer', 'tab-hzp-matriz')" data-target="tab-hzp-matriz" class="tab-btn px-3 py-1 rounded-lg text-xs font-bold border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 transition-all">
+                  Matriz 5x5 &bull; ALARP
+                </button>
+              </div>
+            </div>
+
+            <!-- TAB 1: HAZOP NODO 1 R-101 -->
+            <div id="tab-hzp-nodo1" class="tab-pane space-y-3">
+              <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm space-y-2 text-xs">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-2">
+                  <div>
+                    <strong class="text-[#0b3d23] text-sm font-extrabold uppercase">Nodo 1: Convertidor Catal tico R-101 (Lecho 1) &amp; Bypass WHB-101</strong>
+                    <p class="text-slate-600 text-[11px]"><strong>Intenci n de Dise o:</strong> Oxidaci n catal tica de SO2 a SO3 a 420-610 &deg;C y 1.35 bar absolutos, manteniendo relaci n O2/SO2 = 1.15 y conversi n adiab tica del 62%.</p>
+                  </div>
+                  <span class="text-[10px] font-mono bg-emerald-100 text-emerald-800 px-2 py-1 rounded-lg font-bold self-start">Hoja HAZOP: HZP-R101-01</span>
+                </div>
+
+                <div class="overflow-x-auto">
+                  <table class="w-full hazid-table border-collapse">
+                    <thead>
+                      <tr>
+                        <th>Desviaci n</th>
+                        <th>Causa Ra z</th>
+                        <th>Consecuencias Agudas &amp; Ambientales</th>
+                        <th>Salvaguardas Existentes</th>
+                        <th class="text-center">R. Inh (S&times;L)</th>
+                        <th>Recomendaci n / Acci n de Mitigaci n</th>
+                        <th class="text-center">R. Res (S&times;L)</th>
+                        <th>Responsable</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><strong class="text-red-700 block font-bold">M S Temperatura</strong><span class="text-slate-500 text-[10px]">&gt; 630 &deg;C en Lecho 1</span></td>
+                        <td>Atascamiento de TV-101 en posici n abierta; sobreconcentraci n de SO2 &gt;12% vol. en gas de alimentaci n.</td>
+                        <td>Sinterizaci n irreversible de catalizador V2O5; degradaci n mec nica de grillas de soporte y carcasa SS304H; fuga masiva t xica de SO2/SO3 a atm sfera (ERP-3 &gt;30 ppm).</td>
+                        <td>Alarma TAH-101 a 615 &deg;C en DCS; lazo de control BPCS modulando TV-101.</td>
+                        <td class="text-center font-bold bg-red-100 text-red-900">5 &times; 4 = 20<br><span class="badge-critical px-1 rounded text-[9px]">CR TICO</span></td>
+                        <td>Implementar SIF-01 con votaci n 2oo3 (TIT-101A/B/C) para corte de azufre ESDV-01 (&lt;2s) e inyecci n de quench FV-101Q. Certificaci n SIL-2.</td>
+                        <td class="text-center font-bold bg-emerald-100 text-emerald-900">5 &times; 1 = 5<br><span class="badge-low px-1 rounded text-[9px]">BAJO</span></td>
+                        <td>Ing. Instrumentaci n / C tedra</td>
+                      </tr>
+                      <tr>
+                        <td><strong class="text-sky-700 block font-bold">MENOS Temperatura</strong><span class="text-slate-500 text-[10px]">&lt; 390 &deg;C entrada</span></td>
+                        <td>V lvula TV-101 atascada en cerrado (exceso de gas refrigerado por caldera WHB-101); fallo en precalentamiento.</td>
+                        <td>Apagado de la reacci n catal tica (temperatura inferior a T de ignici n); condensaci n de vapores  cidos y corrosi n sulf rica severa en ductos; sobrecarga de SO2 a chimenea.</td>
+                        <td>Alarma TAL-101 a 410 &deg;C en DCS; monitoreo de temperatura en sala de control.</td>
+                        <td class="text-center font-bold bg-amber-100 text-amber-900">3 &times; 3 = 9<br><span class="badge-med px-1 rounded text-[9px]">MEDIO</span></td>
+                        <td>Instalar interlock de temperatura m nima que cierre autom ticamente el d mper de salida de WHB-101 y notifique al operador de arranque.</td>
+                        <td class="text-center font-bold bg-emerald-100 text-emerald-900">3 &times; 1 = 3<br><span class="badge-low px-1 rounded text-[9px]">BAJO</span></td>
+                        <td>Ing. de Procesos</td>
+                      </tr>
+                      <tr>
+                        <td><strong class="text-red-700 block font-bold">MENOS Flujo</strong><span class="text-slate-500 text-[10px]">P rdida Aire Soplador</span></td>
+                        <td>Disparo el ctrico o fallo mec nico del soplador de aire principal BL-101.</td>
+                        <td>Atm sfera reductora en convertidor; azufre sublimado ingresa a lecho y envenena catalizador de vanadio; riesgo de explosi n de azufre en condensador.</td>
+                        <td>Sensor de presi n diferencial en BL-101; monitoreo de corriente de motor en DCS.</td>
+                        <td class="text-center font-bold bg-red-100 text-red-900">4 &times; 4 = 16<br><span class="badge-critical px-1 rounded text-[9px]">ALTO</span></td>
+                        <td>Interlock por interruptor de flujo bajo FAL-101 que dispare inmediatamente el corte de azufre ESDV-01 y pare bombas de azufre l quido.</td>
+                        <td class="text-center font-bold bg-emerald-100 text-emerald-900">4 &times; 1 = 4<br><span class="badge-low px-1 rounded text-[9px]">BAJO</span></td>
+                        <td>Ing. El ctrica &amp; SIS</td>
+                      </tr>
+                      <tr>
+                        <td><strong class="text-amber-700 block font-bold">M S Presi n Diferencial</strong><span class="text-slate-500 text-[10px]">&Delta;P &gt; 15 kPa</span></td>
+                        <td>Acumulaci n de finos de catalizador por atrici n mec nica o taponamiento con cenizas de azufre.</td>
+                        <td>Colapso estructural de grillas de soporte; p rdida de tiro del sistema; sobrepresurizaci n en WHB-101 y riesgo de fisuras en soldaduras.</td>
+                        <td>Transmisor de presi n diferencial PDIT-101 entre entrada y salida de Lecho 1.</td>
+                        <td class="text-center font-bold bg-amber-100 text-amber-900">4 &times; 3 = 12<br><span class="badge-high px-1 rounded text-[9px]">ALTO</span></td>
+                        <td>Alarma PDAH-101 con procedimiento operativo de tamizado catal tico programado y filtro coalescedor en gas caliente.</td>
+                        <td class="text-center font-bold bg-emerald-100 text-emerald-900">4 &times; 1 = 4<br><span class="badge-low px-1 rounded text-[9px]">BAJO</span></td>
+                        <td>Ing. Mantenimiento</td>
+                      </tr>
+                      <tr>
+                        <td><strong class="text-purple-700 block font-bold">OTRO QUE Composici n</strong><span class="text-slate-500 text-[10px]">Humedad en Gas SO2</span></td>
+                        <td>Rotura de tubo en caldera WHB-101 (inyecci n de vapor a gas caliente); fallo en torre de secado T-101.</td>
+                        <td>Reacci n exot rmica masiva con formaci n de neblina  cida ultrafina de H2SO4; corrosi n catastr fica  cida en acero al carbono a &gt;200 &deg;C.</td>
+                        <td>Medidor de conductividad en purga de vapor; analizador de punto de roc o de gas.</td>
+                        <td class="text-center font-bold bg-red-100 text-red-900">5 &times; 3 = 15<br><span class="badge-critical px-1 rounded text-[9px]">ALTO</span></td>
+                        <td>Instalar analizador  ptico de humedad en l nea con enclavamiento de disparo r pido de WHB-101 y parada de emergencia de planta.</td>
+                        <td class="text-center font-bold bg-emerald-100 text-emerald-900">5 &times; 1 = 5<br><span class="badge-low px-1 rounded text-[9px]">BAJO</span></td>
+                        <td>Ing. de Procesos / QA</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <!-- TAB 2: HAZOP NODO 2 TK-101 -->
+            <div id="tab-hzp-nodo2" class="tab-pane hidden space-y-3">
+              <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm space-y-2 text-xs">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-2">
+                  <div>
+                    <strong class="text-[#0b3d23] text-sm font-extrabold uppercase">Nodo 2: C ntara de Mezcla TK-101, L nea de Diluci n &amp; Enfriador E-101</strong>
+                    <p class="text-slate-600 text-[11px]"><strong>Intenci n de Dise o:</strong> Mezcla de  cido de absorci n con agua desmineralizada para mantener concentraci n 98.4 &plusmn; 0.1% wt a 75 &deg;C y nivel al 60%.</p>
+                  </div>
+                  <span class="text-[10px] font-mono bg-amber-100 text-amber-800 px-2 py-1 rounded-lg font-bold self-start">Hoja HAZOP: HZP-TK101-02</span>
+                </div>
+
+                <div class="overflow-x-auto">
+                  <table class="w-full hazid-table border-collapse">
+                    <thead>
+                      <tr>
+                        <th>Desviaci n</th>
+                        <th>Causa Ra z</th>
+                        <th>Consecuencias Agudas &amp; Ambientales</th>
+                        <th>Salvaguardas Existentes</th>
+                        <th class="text-center">R. Inh (S&times;L)</th>
+                        <th>Recomendaci n / Acci n de Mitigaci n</th>
+                        <th class="text-center">R. Res (S&times;L)</th>
+                        <th>Responsable</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><strong class="text-red-700 block font-bold">MENOS Concentraci n</strong><span class="text-slate-500 text-[10px]">&lt; 95.0% wt H2SO4</span></td>
+                        <td>V lvula FV-28 trabada en 100% abierta; fallo de lazo AIC-101; corte de alimentaci n de  cido desde torres.</td>
+                        <td>Ebullici n violenta por calor de disoluci n (-100 kJ/mol); corrosi n severa de carcasa de acero y bombas (&gt;5 mm/a o); rotura de tuber as y derrame t xico masivo.</td>
+                        <td>Lazo BPCS con dens metro AT-101A; alarma ACAL-101 en 97.8% wt en sala de control.</td>
+                        <td class="text-center font-bold bg-red-100 text-red-900">5 &times; 4 = 20<br><span class="badge-critical px-1 rounded text-[9px]">CR TICO</span></td>
+                        <td>Implementar SIF-02 con analizador redundante AT-101B conectado a solenoide de ESDV-28 para corte de agua &lt;1.5 s (Fail-Closed). SIL-2.</td>
+                        <td class="text-center font-bold bg-emerald-100 text-emerald-900">5 &times; 1 = 5<br><span class="badge-low px-1 rounded text-[9px]">BAJO</span></td>
+                        <td>Ing. Instrumentaci n / C tedra</td>
+                      </tr>
+                      <tr>
+                        <td><strong class="text-amber-700 block font-bold">M S Concentraci n</strong><span class="text-slate-500 text-[10px]">&gt; 99.2% wt / Oleum</span></td>
+                        <td>Falta de suministro de agua desmineralizada; fallo en cierre de FV-28; bloqueo de l nea [28].</td>
+                        <td>P rdida de capacidad de absorci n de SO3 en torres T-201/T-202; escape masivo de niebla  cida y SO3 por chimenea final (&gt;2000 mg/Nm3); sanciones ambientales severas.</td>
+                        <td>Alarma ACAH-101 en 98.8% wt en DCS; operador alerta en tablero.</td>
+                        <td class="text-center font-bold bg-red-100 text-red-900">4 &times; 3 = 12<br><span class="badge-high px-1 rounded text-[9px]">ALTO</span></td>
+                        <td>Instalar l nea de suministro redundante de agua con presostato PSL-28 y alarma de baja presi n de agua desmineralizada.</td>
+                        <td class="text-center font-bold bg-emerald-100 text-emerald-900">4 &times; 1 = 4<br><span class="badge-low px-1 rounded text-[9px]">BAJO</span></td>
+                        <td>Ing. de Procesos</td>
+                      </tr>
+                      <tr>
+                        <td><strong class="text-red-700 block font-bold">M S Nivel</strong><span class="text-slate-500 text-[10px]">&gt; 85% capacidad</span></td>
+                        <td>Fallo en bombas de  cido P-101A/B (disparo de motores); atascamiento de v lvula de impulsi n a torres.</td>
+                        <td>Desbordamiento de  cido sulf rico caliente concentrado al cubeto de retenci n; ataque corrosivo al hormig n; riesgo de quemaduras qu micas mortales a personal.</td>
+                        <td>Transmisor de nivel por radar guiado LT-101; alarma LAH en 75%.</td>
+                        <td class="text-center font-bold bg-red-100 text-red-900">5 &times; 3 = 15<br><span class="badge-critical px-1 rounded text-[9px]">ALTO</span></td>
+                        <td>Interruptor de nivel independiente LSHH-101 (independiente de DCS) con lazo a ESDV-28 y parada autom tica de bombeo de alimentaci n.</td>
+                        <td class="text-center font-bold bg-emerald-100 text-emerald-900">5 &times; 1 = 5<br><span class="badge-low px-1 rounded text-[9px]">BAJO</span></td>
+                        <td>Seguridad de Procesos / SIS</td>
+                      </tr>
+                      <tr>
+                        <td><strong class="text-amber-700 block font-bold">MENOS Nivel</strong><span class="text-slate-500 text-[10px]">&lt; 20% capacidad</span></td>
+                        <td>Rotura de sello mec nico en bomba P-101; drenaje inadvertido de c ntara; parada de  cido de torres.</td>
+                        <td>Cavitaci n destructiva y descebe de bombas de recirculaci n P-101A/B; cese total de flujo a torres con emisi n no tratada de SO3 a atm sfera.</td>
+                        <td>Alarma LAL en 35% en DCS; protecci n por sobrecorriente de bombas.</td>
+                        <td class="text-center font-bold bg-amber-100 text-amber-900">4 &times; 3 = 12<br><span class="badge-high px-1 rounded text-[9px]">ALTO</span></td>
+                        <td>Interlock de nivel bajo-bajo LSLL-101 con disparo y parada inmediata de bombas P-101A/B para proteger sello mec nico de carburo de silicio.</td>
+                        <td class="text-center font-bold bg-emerald-100 text-emerald-900">4 &times; 1 = 4<br><span class="badge-low px-1 rounded text-[9px]">BAJO</span></td>
+                        <td>Ing. Mantenimiento / C tedra</td>
+                      </tr>
+                      <tr>
+                        <td><strong class="text-purple-700 block font-bold">M S Temperatura</strong><span class="text-slate-500 text-[10px]">&gt; 90 &deg;C en descarga</span></td>
+                        <td>P rdida de agua de enfriamiento en intercambiador E-101; ensuciamiento severo de placas de aleaci n SX.</td>
+                        <td>Aumento de agresividad corrosiva del  cido en bombas y v lvulas; dilataci n t rmica diferencial y fallo de juntas elastom ricas de PTFE.</td>
+                        <td>Transmisor de temperatura TT-102 en salida de E-101; alarma TAH en 85 &deg;C.</td>
+                        <td class="text-center font-bold bg-amber-100 text-amber-900">3 &times; 3 = 9<br><span class="badge-med px-1 rounded text-[9px]">MEDIO</span></td>
+                        <td>Instalaci n de intercambiador de calor redundante E-101B en paralelo con limpieza CIP y monitoreo de coeficiente global U en DCS.</td>
+                        <td class="text-center font-bold bg-emerald-100 text-emerald-900">3 &times; 1 = 3<br><span class="badge-low px-1 rounded text-[9px]">BAJO</span></td>
+                        <td>Jefe de Planta</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <!-- TAB 3: MATRIZ DE RIESGO 5x5 Y ALARP -->
+            <div id="tab-hzp-matriz" class="tab-pane hidden space-y-3">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                <!-- Matriz Visual 5x5 -->
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+                  <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+                    <h3 class="text-xs font-black text-[#0b3d23] uppercase">Matriz de Riesgo Cualitativa 5&times;5 (Severidad &times; Probabilidad)</h3>
+                    <span class="text-[10px] font-mono bg-slate-100 px-2 py-0.5 rounded text-slate-700">IEC 61882 / CCPS</span>
+                  </div>
+
+                  <div class="overflow-x-auto">
+                    <table class="w-full text-center border-collapse text-[11px]">
+                      <thead>
+                        <tr class="bg-slate-100">
+                          <th class="p-1 border border-slate-200 text-left font-bold text-slate-700">Severidad (S) \ Frec. (L)</th>
+                          <th class="p-1 border border-slate-200 font-bold">1 (Raro)</th>
+                          <th class="p-1 border border-slate-200 font-bold">2 (Improbable)</th>
+                          <th class="p-1 border border-slate-200 font-bold">3 (Posible)</th>
+                          <th class="p-1 border border-slate-200 font-bold">4 (Probable)</th>
+                          <th class="p-1 border border-slate-200 font-bold">5 (Frecuente)</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td class="p-1 border border-slate-200 font-bold text-left bg-slate-50">5: Catastr fico (Fatalidad / Fuga)</td>
+                          <td class="p-1 border border-slate-200 bg-amber-200 font-bold">5 (M) &bull; [RES]</td>
+                          <td class="p-1 border border-slate-200 bg-orange-300 font-bold">10 (A)</td>
+                          <td class="p-1 border border-slate-200 bg-red-400 text-white font-bold">15 (C)</td>
+                          <td class="p-1 border border-slate-200 bg-red-600 text-white font-bold">20 (C) &bull; [INH]</td>
+                          <td class="p-1 border border-slate-200 bg-red-800 text-white font-bold">25 (C)</td>
+                        </tr>
+                        <tr>
+                          <td class="p-1 border border-slate-200 font-bold text-left bg-slate-50">4: Cr tico (Da o Severo / Emisi n)</td>
+                          <td class="p-1 border border-slate-200 bg-emerald-200 font-bold">4 (B) &bull; [RES]</td>
+                          <td class="p-1 border border-slate-200 bg-amber-200 font-bold">8 (M)</td>
+                          <td class="p-1 border border-slate-200 bg-orange-300 font-bold">12 (A)</td>
+                          <td class="p-1 border border-slate-200 bg-red-500 text-white font-bold">16 (C) &bull; [INH]</td>
+                          <td class="p-1 border border-slate-200 bg-red-600 text-white font-bold">20 (C)</td>
+                        </tr>
+                        <tr>
+                          <td class="p-1 border border-slate-200 font-bold text-left bg-slate-50">3: Moderado (P rdida Producci n)</td>
+                          <td class="p-1 border border-slate-200 bg-emerald-100">3 (B)</td>
+                          <td class="p-1 border border-slate-200 bg-emerald-200">6 (M)</td>
+                          <td class="p-1 border border-slate-200 bg-amber-200 font-bold">9 (M)</td>
+                          <td class="p-1 border border-slate-200 bg-orange-300 font-bold">12 (A)</td>
+                          <td class="p-1 border border-slate-200 bg-red-400 text-white font-bold">15 (C)</td>
+                        </tr>
+                        <tr>
+                          <td class="p-1 border border-slate-200 font-bold text-left bg-slate-50">2: Menor (Aver a Local)</td>
+                          <td class="p-1 border border-slate-200 bg-emerald-100">2 (B)</td>
+                          <td class="p-1 border border-slate-200 bg-emerald-100">4 (B)</td>
+                          <td class="p-1 border border-slate-200 bg-emerald-200">6 (M)</td>
+                          <td class="p-1 border border-slate-200 bg-amber-200">8 (M)</td>
+                          <td class="p-1 border border-slate-200 bg-orange-300 font-bold">10 (A)</td>
+                        </tr>
+                        <tr>
+                          <td class="p-1 border border-slate-200 font-bold text-left bg-slate-50">1: Insignificante</td>
+                          <td class="p-1 border border-slate-200 bg-emerald-50">1 (B)</td>
+                          <td class="p-1 border border-slate-200 bg-emerald-100">2 (B)</td>
+                          <td class="p-1 border border-slate-200 bg-emerald-100">3 (B)</td>
+                          <td class="p-1 border border-slate-200 bg-emerald-200">4 (B)</td>
+                          <td class="p-1 border border-slate-200 bg-emerald-200">5 (M)</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <p class="text-[10px] text-slate-500 italic">
+                    Leyenda: <strong>[INH]</strong> = Riesgo Inherente sin salvaguardas (Zona Cr tica: 15-25) &bull; <strong>[RES]</strong> = Riesgo Residual tras implementar BPCS + SIF SIL-2 (Zona Aceptable ALARP: 1-5).
+                  </p>
+                </div>
+
+                <!-- Criterios ALARP y Reducci n del Riesgo -->
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-2.5">
+                  <h3 class="text-xs font-black text-[#0b3d23] uppercase border-b border-slate-100 pb-2">
+                    Criterio ALARP y Filosof a de Capas de Protecci n (LOPA)
+                  </h3>
+
+                  <div class="space-y-2">
+                    <div class="p-2.5 bg-red-50 rounded-xl border border-red-200 text-[11px]">
+                      <strong class="text-red-900 block font-bold mb-0.5">Zona Intolerable (Riesgo &gt; 15)</strong>
+                      <p class="text-slate-700">El riesgo no puede ser justificado bajo ninguna circunstancia. Obliga a redise o del proceso o a la adici n inmediata de una Funci n Instrumentada de Seguridad (SIF) certificada bajo IEC 61511.</p>
+                    </div>
+
+                    <div class="p-2.5 bg-amber-50 rounded-xl border border-amber-200 text-[11px]">
+                      <strong class="text-amber-900 block font-bold mb-0.5">Regi n ALARP (As Low As Reasonably Practicable &bull; 6 - 12)</strong>
+                      <p class="text-slate-700">El riesgo s lo es tolerable si su reducci n adicional resulta desproporcionadamente costosa frente a la ganancia en seguridad. Requiere alarmas independientes de proceso y procedimientos operativos auditables.</p>
+                    </div>
+
+                    <div class="p-2.5 bg-emerald-50 rounded-xl border border-emerald-200 text-[11px]">
+                      <strong class="text-emerald-900 block font-bold mb-0.5">Zona Ampliamente Aceptable (Riesgo &le; 5)</strong>
+                      <p class="text-slate-700">Nivel de riesgo residual alcanzado en ambos nodos tras la implementaci n de la votaci n 2oo3 (R-101) y el corte r pido de diluci n ESDV-28 (TK-101).</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `
+      },
+      {
+        id: "fta-analisis",
+        title: "4.  rboles de Fallos (FTA) y Mejoras de Dise o",
+        render: () => `
+          <div class="space-y-4" id="ftaTabsContainer">
+            <!-- Header diapositiva -->
+            <div class="border-b border-slate-200 pb-2.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div>
+                <span class="text-xs font-bold uppercase tracking-wider text-[#e5a93b]">M dulo 4 &bull; Confiabilidad &amp; L gica de Falla</span>
+                <h2 class="text-xl sm:text-2xl font-black text-[#0b3d23]"> rboles de Fallos (FTA &bull; IEC 61025) y Mejoras Inherentemente Seguras</h2>
+              </div>
+              <div class="flex items-center space-x-1.5 bg-slate-100 p-1 rounded-xl border border-slate-200 self-start sm:self-auto">
+                <button onclick="switchTab('ftaTabsContainer', 'tab-fta-nodo1')" data-target="tab-fta-nodo1" class="tab-btn px-3 py-1 rounded-lg text-xs font-bold border transition-all tab-active">
+                  FTA Nodo 1: R-101
+                </button>
+                <button onclick="switchTab('ftaTabsContainer', 'tab-fta-nodo2')" data-target="tab-fta-nodo2" class="tab-btn px-3 py-1 rounded-lg text-xs font-bold border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 transition-all">
+                  FTA Nodo 2: TK-101
+                </button>
+                <button onclick="switchTab('ftaTabsContainer', 'tab-fta-mejoras')" data-target="tab-fta-mejoras" class="tab-btn px-3 py-1 rounded-lg text-xs font-bold border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 transition-all">
+                  Mejoras de Dise o (ISD)
+                </button>
+              </div>
+            </div>
+
+            <!-- TAB 1: FTA NODO 1 R-101 -->
+            <div id="tab-fta-nodo1" class="tab-pane space-y-3">
+              <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm space-y-2 text-xs">
+                <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+                  <div>
+                    <strong class="text-[#0b3d23] text-sm font-extrabold uppercase">FTA Nodo 1: Rotura o Fuga T xica por Embalamiento T rmico en R-101 (T &gt; 630 &deg;C)</strong>
+                    <p class="text-slate-600 text-[11px]"><strong>L mites del An lisis:</strong> Desde la salida de WHB-101, lecho catal tico 1 de R-101, hasta lazo de corte ESDV-01 y quench FV-101Q.</p>
+                  </div>
+                  <span class="text-[10px] font-mono bg-red-100 text-red-800 px-2.5 py-1 rounded-lg font-bold">TOP EVENT: TE-01</span>
+                </div>
+
+                <!-- Diagrama SVG FTA Nodo 1 -->
+                <div class="w-full bg-[#f8fafc] rounded-xl border border-slate-300 p-2 overflow-x-auto">
+                  <svg viewBox="0 0 940 370" class="w-full min-w-[850px] h-auto select-none" style="font-family:'JetBrains Mono',monospace;">
+                    <!-- TOP EVENT -->
+                    <rect x="360" y="15" width="220" height="50" rx="8" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+                    <text x="470" y="33" font-size="9" font-weight="bold" fill="#991b1b" text-anchor="middle">EVENTO SUPERIOR (TOP)</text>
+                    <text x="470" y="47" font-size="8" font-weight="bold" fill="#dc2626" text-anchor="middle">Embalamiento T rmico T &gt; 630 C</text>
+                    <text x="470" y="58" font-size="7" fill="#7f1d1d" text-anchor="middle">y Fuga Masiva de SO2/SO3 en R-101</text>
+
+                    <!-- L nea a Puerta Principal AND-01 -->
+                    <line x1="470" y1="65" x2="470" y2="90" stroke="#475569" stroke-width="2"/>
+
+                    <!-- COMPUERTA AND-01 (Requiere condici n iniciadora Y fallo de salvaguardas) -->
+                    <!-- S mbolo Puerta AND -->
+                    <path d="M 455,115 L 455,95 Q 470,85 485,95 L 485,115 Z" fill="#e2e8f0" stroke="#0b3d23" stroke-width="2"/>
+                    <text x="470" y="110" font-size="8" font-weight="bold" fill="#0b3d23" text-anchor="middle">AND</text>
+
+                    <!-- L neas desde AND-01 a ramas izquierda y derecha -->
+                    <line x1="470" y1="115" x2="470" y2="135" stroke="#475569" stroke-width="2"/>
+                    <line x1="240" y1="135" x2="700" y2="135" stroke="#475569" stroke-width="2"/>
+                    <line x1="240" y1="135" x2="240" y2="155" stroke="#475569" stroke-width="2"/>
+                    <line x1="700" y1="135" x2="700" y2="155" stroke="#475569" stroke-width="2"/>
+
+                    <!-- EVENTO INTERMEDIO 1 (IZQ): Exotermia No Controlada en Lecho 1 -->
+                    <rect x="140" y="155" width="200" height="45" rx="6" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
+                    <text x="240" y="173" font-size="8" font-weight="bold" fill="#92400e" text-anchor="middle">E-INT-01: Exotermia An mala</text>
+                    <text x="240" y="188" font-size="7" fill="#b45309" text-anchor="middle">Sobretemperatura &gt; 615 C en Lecho 1</text>
+
+                    <!-- L nea a Puerta OR-01 -->
+                    <line x1="240" y1="200" x2="240" y2="215" stroke="#475569" stroke-width="2"/>
+                    <!-- Puerta OR-01 -->
+                    <path d="M 225,235 Q 240,215 255,235 L 255,225 Q 240,210 225,225 Z" fill="#e2e8f0" stroke="#0b3d23" stroke-width="2"/>
+                    <text x="240" y="232" font-size="7" font-weight="bold" fill="#0b3d23" text-anchor="middle">OR</text>
+
+                    <!-- Eventos B sicos Rama Izquierda -->
+                    <line x1="240" y1="235" x2="240" y2="255" stroke="#475569" stroke-width="2"/>
+                    <line x1="120" y1="255" x2="350" y2="255" stroke="#475569" stroke-width="2"/>
+                    <line x1="120" y1="255" x2="120" y2="280" stroke="#475569" stroke-width="1.5"/>
+                    <line x1="240" y1="255" x2="240" y2="280" stroke="#475569" stroke-width="1.5"/>
+                    <line x1="350" y1="255" x2="350" y2="280" stroke="#475569" stroke-width="1.5"/>
+
+                    <!-- B-01: Fallo de TV-101 abierta -->
+                    <circle cx="120" cy="300" r="20" fill="#ffffff" stroke="#0b3d23" stroke-width="1.5"/>
+                    <text x="120" y="297" font-size="7" font-weight="bold" fill="#0b3d23" text-anchor="middle">B-01</text>
+                    <text x="120" y="308" font-size="6" fill="#64748b" text-anchor="middle">TV-101 open</text>
+                    <text x="120" y="330" font-size="7" font-weight="bold" fill="#475569" text-anchor="middle">q1 = 2.5e-3</text>
+
+                    <!-- B-02: Exceso de SO2 >12% -->
+                    <circle cx="240" cy="300" r="20" fill="#ffffff" stroke="#0b3d23" stroke-width="1.5"/>
+                    <text x="240" y="297" font-size="7" font-weight="bold" fill="#0b3d23" text-anchor="middle">B-02</text>
+                    <text x="240" y="308" font-size="6" fill="#64748b" text-anchor="middle">SO2 &gt;12% vol</text>
+                    <text x="240" y="330" font-size="7" font-weight="bold" fill="#475569" text-anchor="middle">q2 = 8.0e-3</text>
+
+                    <!-- B-03: Fallo sensor TIC-101 (DCS) -->
+                    <circle cx="350" cy="300" r="20" fill="#ffffff" stroke="#0b3d23" stroke-width="1.5"/>
+                    <text x="350" y="297" font-size="7" font-weight="bold" fill="#0b3d23" text-anchor="middle">B-03</text>
+                    <text x="350" y="308" font-size="6" fill="#64748b" text-anchor="middle">TIT-101 drift</text>
+                    <text x="350" y="330" font-size="7" font-weight="bold" fill="#475569" text-anchor="middle">q3 = 1.2e-2</text>
+
+                    <!-- EVENTO INTERMEDIO 2 (DER): Fallo de las Salvaguardas de Seguridad -->
+                    <rect x="600" y="155" width="200" height="45" rx="6" fill="#fee2e2" stroke="#dc2626" stroke-width="1.5"/>
+                    <text x="700" y="173" font-size="8" font-weight="bold" fill="#991b1b" text-anchor="middle">E-INT-02: Fallo de Mitigaci n</text>
+                    <text x="700" y="188" font-size="7" fill="#dc2626" text-anchor="middle">Fallo de Capas de Protecci n (SIS + Oper)</text>
+
+                    <!-- L nea a Puerta AND-02 (Fallo operador Y Fallo SIS) -->
+                    <line x1="700" y1="200" x2="700" y2="215" stroke="#475569" stroke-width="2"/>
+                    <path d="M 685,235 L 685,215 Q 700,205 715,215 L 715,235 Z" fill="#e2e8f0" stroke="#0b3d23" stroke-width="2"/>
+                    <text x="700" y="230" font-size="7" font-weight="bold" fill="#0b3d23" text-anchor="middle">AND</text>
+
+                    <!-- Eventos B sicos Rama Derecha -->
+                    <line x1="700" y1="235" x2="700" y2="255" stroke="#475569" stroke-width="2"/>
+                    <line x1="590" y1="255" x2="810" y2="255" stroke="#475569" stroke-width="2"/>
+                    <line x1="590" y1="255" x2="590" y2="280" stroke="#475569" stroke-width="1.5"/>
+                    <line x1="700" y1="255" x2="700" y2="280" stroke="#475569" stroke-width="1.5"/>
+                    <line x1="810" y1="255" x2="810" y2="280" stroke="#475569" stroke-width="1.5"/>
+
+                    <!-- B-04: Error Operador ante TAH-101 -->
+                    <circle cx="590" cy="300" r="20" fill="#ffffff" stroke="#d97706" stroke-width="1.5"/>
+                    <text x="590" y="297" font-size="7" font-weight="bold" fill="#d97706" text-anchor="middle">B-04</text>
+                    <text x="590" y="308" font-size="6" fill="#64748b" text-anchor="middle">Omisi n Oper.</text>
+                    <text x="590" y="330" font-size="7" font-weight="bold" fill="#475569" text-anchor="middle">q4 = 1.0e-1</text>
+
+                    <!-- B-05: Fallo en Demanda ESDV-01 (Atascada) -->
+                    <circle cx="700" cy="300" r="20" fill="#ffffff" stroke="#dc2626" stroke-width="1.5"/>
+                    <text x="700" y="297" font-size="7" font-weight="bold" fill="#dc2626" text-anchor="middle">B-05</text>
+                    <text x="700" y="308" font-size="6" fill="#64748b" text-anchor="middle">ESDV-01 PFD</text>
+                    <text x="700" y="330" font-size="7" font-weight="bold" fill="#475569" text-anchor="middle">q5 = 3.5e-3</text>
+
+                    <!-- B-06: Fallo de Quench FV-101Q -->
+                    <circle cx="810" cy="300" r="20" fill="#ffffff" stroke="#dc2626" stroke-width="1.5"/>
+                    <text x="810" y="297" font-size="7" font-weight="bold" fill="#dc2626" text-anchor="middle">B-06</text>
+                    <text x="810" y="308" font-size="6" fill="#64748b" text-anchor="middle">FV-101Q fail</text>
+                    <text x="810" y="330" font-size="7" font-weight="bold" fill="#475569" text-anchor="middle">q6 = 4.2e-3</text>
+
+                    <!-- Cuadro de Fallo de Modo Com n (CCF) beta=0.05 -->
+                    <rect x="360" y="170" width="220" height="55" rx="6" fill="#fff1f2" stroke="#e11d48" stroke-dasharray="3,2" stroke-width="1.5"/>
+                    <text x="470" y="187" font-size="8" font-weight="bold" fill="#9f1239" text-anchor="middle">FALLA DE MODO COM N (CCF &bull;   = 0.05)</text>
+                    <text x="470" y="200" font-size="7" fill="#475569" text-anchor="middle">P rdida total de aire de instrumentos en planta</text>
+                    <text x="470" y="212" font-size="7" font-weight="bold" fill="#e11d48" text-anchor="middle">Mitigaci n: Resorte mec nico FC/FO + botella N2</text>
+                  </svg>
+                </div>
+
+                <!-- An lisis Cuantitativo y Cortes M nimos R-101 -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                  <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-1">
+                    <strong class="text-[#0b3d23] block font-bold text-[11px] uppercase">C lculo de Probabilidad No Invertida</strong>
+                    <p class="text-slate-700 text-[11px]">&bull; <strong>Rama Iniciadora (OR-01):</strong> P(E-INT-01) = 1 &minus; &prod;<sub>i=1..3</sub> (1 &minus; q<sub>i</sub>) &approx; <strong>2.25 &times; 10<sup>&minus;2</sup> /año</strong>.</p>
+                    <p class="text-slate-700 text-[11px]">&bull; <strong>Rama Mitigaci n (AND-02):</strong> P(E-INT-02) = q<sub>4</sub> &times; (q<sub>5</sub> + q<sub>6</sub>) = 1.0 &times; 10<sup>&minus;1</sup> &times; 7.7 &times; 10<sup>&minus;3</sup> = <strong>7.7 &times; 10<sup>&minus;4</sup></strong>.</p>
+                    <p class="text-slate-700 text-[11px]">&bull; <strong>Top Event TE-01 (AND-01):</strong> P(TOP) = P(E-INT-01) &times; P(E-INT-02) &approx; <strong>1.73 &times; 10<sup>&minus;5</sup> /año</strong> (Categoría de Riesgo Residual: 1 &bull; Raro &bull; Aceptable SIL-2).</p>
+                  </div>
+
+                  <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-1">
+                    <strong class="text-[#0b3d23] block font-bold text-[11px] uppercase">Conjuntos M nimos de Corte (Minimal Cut Sets)</strong>
+                    <p class="text-slate-700 text-[11px]">&bull; <strong>MCS 1:</strong> <span class="font-mono font-bold bg-slate-200 px-1.5 py-0.5 rounded text-slate-800">{B-01, B-04, B-05}</span> &rarr; Falla TV-101 abierta + Omisión operador + Falla cierre ESDV-01.</p>
+                    <p class="text-slate-700 text-[11px]">&bull; <strong>MCS 2:</strong> <span class="font-mono font-bold bg-slate-200 px-1.5 py-0.5 rounded text-slate-800">{B-02, B-04, B-05}</span> &rarr; Sobreconcentración SO<sub>2</sub> + Omisión operador + Falla cierre ESDV-01.</p>
+                    <p class="text-slate-700 text-[11px]">&bull; <strong>Conexi n HAZOP:</strong> Valida directamente la salvaguarda <em>SIF-01</em> como barrera independiente de protecci n (IPL) con PFDavg &le; 10<sup>-2</sup>.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- TAB 2: FTA NODO 2 TK-101 -->
+            <div id="tab-fta-nodo2" class="tab-pane hidden space-y-3">
+              <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm space-y-2 text-xs">
+                <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+                  <div>
+                    <strong class="text-[#0b3d23] text-sm font-extrabold uppercase">FTA Nodo 2: Fallo Catastr fico o Fuga  cida por Ebullici n / Corrosi n en TK-101</strong>
+                    <p class="text-slate-600 text-[11px]"><strong>L mites del An lisis:</strong> C ntara TK-101, bombas P-101A/B, l nea de agua de diluci n [28], analizadores AT-101A/B y v lvula ESDV-28.</p>
+                  </div>
+                  <span class="text-[10px] font-mono bg-amber-100 text-amber-800 px-2.5 py-1 rounded-lg font-bold">TOP EVENT: TE-02</span>
+                </div>
+
+                <!-- Diagrama SVG FTA Nodo 2 -->
+                <div class="w-full bg-[#f8fafc] rounded-xl border border-slate-300 p-2 overflow-x-auto">
+                  <svg viewBox="0 0 940 370" class="w-full min-w-[850px] h-auto select-none" style="font-family:'JetBrains Mono',monospace;">
+                    <!-- TOP EVENT TK-101 -->
+                    <rect x="360" y="15" width="220" height="50" rx="8" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+                    <text x="470" y="33" font-size="9" font-weight="bold" fill="#991b1b" text-anchor="middle">EVENTO SUPERIOR (TOP)</text>
+                    <text x="470" y="47" font-size="8" font-weight="bold" fill="#dc2626" text-anchor="middle">Ruptura o Ebullici n Violenta en TK-101</text>
+                    <text x="470" y="58" font-size="7" fill="#7f1d1d" text-anchor="middle">por Diluci n &lt; 95% o Nivel &gt; 85%</text>
+
+                    <!-- Puerta AND-03 -->
+                    <line x1="470" y1="65" x2="470" y2="90" stroke="#475569" stroke-width="2"/>
+                    <path d="M 455,115 L 455,95 Q 470,85 485,95 L 485,115 Z" fill="#e2e8f0" stroke="#0b3d23" stroke-width="2"/>
+                    <text x="470" y="110" font-size="8" font-weight="bold" fill="#0b3d23" text-anchor="middle">AND</text>
+
+                    <!-- Ramas hacia E-INT-03 y E-INT-04 -->
+                    <line x1="470" y1="115" x2="470" y2="135" stroke="#475569" stroke-width="2"/>
+                    <line x1="240" y1="135" x2="700" y2="135" stroke="#475569" stroke-width="2"/>
+                    <line x1="240" y1="135" x2="240" y2="155" stroke="#475569" stroke-width="2"/>
+                    <line x1="700" y1="135" x2="700" y2="155" stroke="#475569" stroke-width="2"/>
+
+                    <!-- EVENTO INTERMEDIO 3 (IZQ): Entrada Excesiva de Agua Desmineralizada -->
+                    <rect x="140" y="155" width="200" height="45" rx="6" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
+                    <text x="240" y="173" font-size="8" font-weight="bold" fill="#92400e" text-anchor="middle">E-INT-03: Sobrealimentaci n Agua</text>
+                    <text x="240" y="188" font-size="7" fill="#b45309" text-anchor="middle">Exceso de Diluci n o Falla Lazo AIC-101</text>
+
+                    <line x1="240" y1="200" x2="240" y2="215" stroke="#475569" stroke-width="2"/>
+                    <!-- Puerta OR-02 -->
+                    <path d="M 225,235 Q 240,215 255,235 L 255,225 Q 240,210 225,225 Z" fill="#e2e8f0" stroke="#0b3d23" stroke-width="2"/>
+                    <text x="240" y="232" font-size="7" font-weight="bold" fill="#0b3d23" text-anchor="middle">OR</text>
+
+                    <!-- Eventos B sicos Rama Izq TK-101 -->
+                    <line x1="240" y1="235" x2="240" y2="255" stroke="#475569" stroke-width="2"/>
+                    <line x1="120" y1="255" x2="350" y2="255" stroke="#475569" stroke-width="2"/>
+                    <line x1="120" y1="255" x2="120" y2="280" stroke="#475569" stroke-width="1.5"/>
+                    <line x1="240" y1="255" x2="240" y2="280" stroke="#475569" stroke-width="1.5"/>
+                    <line x1="350" y1="255" x2="350" y2="280" stroke="#475569" stroke-width="1.5"/>
+
+                    <circle cx="120" cy="300" r="20" fill="#ffffff" stroke="#0b3d23" stroke-width="1.5"/>
+                    <text x="120" y="297" font-size="7" font-weight="bold" fill="#0b3d23" text-anchor="middle">B-07</text>
+                    <text x="120" y="308" font-size="6" fill="#64748b" text-anchor="middle">FV-28 abierta</text>
+                    <text x="120" y="330" font-size="7" font-weight="bold" fill="#475569" text-anchor="middle">q7 = 3.2e-3</text>
+
+                    <circle cx="240" cy="300" r="20" fill="#ffffff" stroke="#0b3d23" stroke-width="1.5"/>
+                    <text x="240" y="297" font-size="7" font-weight="bold" fill="#0b3d23" text-anchor="middle">B-08</text>
+                    <text x="240" y="308" font-size="6" fill="#64748b" text-anchor="middle">Coriolis drift</text>
+                    <text x="240" y="330" font-size="7" font-weight="bold" fill="#475569" text-anchor="middle">q8 = 4.0e-3</text>
+
+                    <circle cx="350" cy="300" r="20" fill="#ffffff" stroke="#0b3d23" stroke-width="1.5"/>
+                    <text x="350" y="297" font-size="7" font-weight="bold" fill="#0b3d23" text-anchor="middle">B-09</text>
+                    <text x="350" y="308" font-size="6" fill="#64748b" text-anchor="middle">Corte  cido T-201</text>
+                    <text x="350" y="330" font-size="7" font-weight="bold" fill="#475569" text-anchor="middle">q9 = 1.5e-3</text>
+
+                    <!-- EVENTO INTERMEDIO 4 (DER): Fallo de Corte de Seguridad SIF-02 -->
+                    <rect x="600" y="155" width="200" height="45" rx="6" fill="#fee2e2" stroke="#dc2626" stroke-width="1.5"/>
+                    <text x="700" y="173" font-size="8" font-weight="bold" fill="#991b1b" text-anchor="middle">E-INT-04: Fallo Barreras SIF-02</text>
+                    <text x="700" y="188" font-size="7" fill="#dc2626" text-anchor="middle">Fallo Corte R pido de Agua ESDV-28</text>
+
+                    <line x1="700" y1="200" x2="700" y2="215" stroke="#475569" stroke-width="2"/>
+                    <path d="M 685,235 L 685,215 Q 700,205 715,215 L 715,235 Z" fill="#e2e8f0" stroke="#0b3d23" stroke-width="2"/>
+                    <text x="700" y="230" font-size="7" font-weight="bold" fill="#0b3d23" text-anchor="middle">AND</text>
+
+                    <!-- Eventos B sicos Rama Derecha TK-101 -->
+                    <line x1="700" y1="235" x2="700" y2="255" stroke="#475569" stroke-width="2"/>
+                    <line x1="590" y1="255" x2="810" y2="255" stroke="#475569" stroke-width="2"/>
+                    <line x1="590" y1="255" x2="590" y2="280" stroke="#475569" stroke-width="1.5"/>
+                    <line x1="700" y1="255" x2="700" y2="280" stroke="#475569" stroke-width="1.5"/>
+                    <line x1="810" y1="255" x2="810" y2="280" stroke="#475569" stroke-width="1.5"/>
+
+                    <circle cx="590" cy="300" r="20" fill="#ffffff" stroke="#d97706" stroke-width="1.5"/>
+                    <text x="590" y="297" font-size="7" font-weight="bold" fill="#d97706" text-anchor="middle">B-10</text>
+                    <text x="590" y="308" font-size="6" fill="#64748b" text-anchor="middle">Omisi n ACAL</text>
+                    <text x="590" y="330" font-size="7" font-weight="bold" fill="#475569" text-anchor="middle">q10 = 1.0e-1</text>
+
+                    <circle cx="700" cy="300" r="20" fill="#ffffff" stroke="#dc2626" stroke-width="1.5"/>
+                    <text x="700" y="297" font-size="7" font-weight="bold" fill="#dc2626" text-anchor="middle">B-11</text>
+                    <text x="700" y="308" font-size="6" fill="#64748b" text-anchor="middle">ESDV-28 PFD</text>
+                    <text x="700" y="330" font-size="7" font-weight="bold" fill="#475569" text-anchor="middle">q11 = 2.8e-3</text>
+
+                    <circle cx="810" cy="300" r="20" fill="#ffffff" stroke="#dc2626" stroke-width="1.5"/>
+                    <text x="810" y="297" font-size="7" font-weight="bold" fill="#dc2626" text-anchor="middle">B-12</text>
+                    <text x="810" y="308" font-size="6" fill="#64748b" text-anchor="middle">Fallo Solenoide</text>
+                    <text x="810" y="330" font-size="7" font-weight="bold" fill="#475569" text-anchor="middle">q12 = 1.5e-3</text>
+
+                    <!-- CCF Nodo 2 -->
+                    <rect x="360" y="170" width="220" height="55" rx="6" fill="#fff1f2" stroke="#e11d48" stroke-dasharray="3,2" stroke-width="1.5"/>
+                    <text x="470" y="187" font-size="8" font-weight="bold" fill="#9f1239" text-anchor="middle">FALLA MODO COM N (CCF &bull;   = 0.03)</text>
+                    <text x="470" y="200" font-size="7" fill="#475569" text-anchor="middle">Contaminaci n de l nea de aire / corte de UPS</text>
+                    <text x="470" y="212" font-size="7" font-weight="bold" fill="#e11d48" text-anchor="middle">Mitigaci n: Solenoide desenergizado para disparo</text>
+                  </svg>
+                </div>
+
+                <!-- An lisis Cuantitativo TK-101 -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                  <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-1">
+                    <strong class="text-[#0b3d23] block font-bold text-[11px] uppercase">C lculo de Probabilidad No Invertida</strong>
+                    <p class="text-slate-700 text-[11px]">&bull; <strong>Rama Iniciadora:</strong> P(E-INT-03) &approx; <strong>8.68 &times; 10<sup>&minus;3</sup> /año</strong>.</p>
+                    <p class="text-slate-700 text-[11px]">&bull; <strong>Rama Salvaguardas:</strong> P(E-INT-04) = q<sub>10</sub> &times; (q<sub>11</sub> + q<sub>12</sub>) = 1.0 &times; 10<sup>&minus;1</sup> &times; 4.3 &times; 10<sup>&minus;3</sup> = <strong>4.3 &times; 10<sup>&minus;4</sup></strong>.</p>
+                    <p class="text-slate-700 text-[11px]">&bull; <strong>Top Event TE-02:</strong> P(TOP) = P(E-INT-03) &times; P(E-INT-04) &approx; <strong>3.73 &times; 10<sup>&minus;6</sup> /año</strong> (Riesgo Residual aceptable SIL-2 / IEC 61511).</p>
+                  </div>
+
+                  <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-1">
+                    <strong class="text-[#0b3d23] block font-bold text-[11px] uppercase">Cortes M nimos &amp; Trazabilidad HAZOP</strong>
+                    <p class="text-slate-700 text-[11px]">&bull; <strong>MCS Principal:</strong> <span class="font-mono font-bold bg-slate-200 px-1.5 py-0.5 rounded text-slate-800">{B-07, B-10, B-11}</span> &rarr; Falla FV-28 + Omisión operador + Atascamiento mecánico ESDV-28.</p>
+                    <p class="text-slate-700 text-[11px]">&bull; <strong>Interacci n HAZOP &harr; FTA:</strong> Comprueba que la causa del HAZOP "MENOS Concentraci n" s lo se propaga a desastre si falla tanto la respuesta humana como el hardware del SIS.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- TAB 3: MEJORAS DE DISE O INHERENTEMENTE SEGURO (ISD) -->
+            <div id="tab-fta-mejoras" class="tab-pane hidden space-y-4">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                <!-- Mejora Nodo 1 R-101 -->
+                <div class="bg-white p-4 rounded-2xl border-2 border-[#1c6b41]/40 shadow-sm space-y-3">
+                  <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+                    <h3 class="text-xs font-black text-[#0b3d23] uppercase">
+                      Mejora ISD Nodo 1 &bull; Convertidor R-101
+                    </h3>
+                    <span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded font-bold text-[10px]">Atenuaci n / Fail-Safe</span>
+                  </div>
+
+                  <div class="space-y-2 text-[11px] text-slate-700">
+                    <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200">
+                      <strong class="text-[#0b3d23] block font-bold mb-1">1. Arquitectura de Votaci n 2oo3 con Sensores de Tecnolog a Diversa</strong>
+                      <p>Para eliminar fallos de modo com n (CCF) por degradaci n qu mica de vainas, se sustituye el tr o id ntico de termocuplas por <strong>2 termocuplas Tipo K (Inconel 600) + 1 termorresistencia Pt100 (Hastelloy C-276)</strong> conectadas a tarjetas I/O de seguridad aisladas galv nicamente con buses HART redundantes.</p>
+                    </div>
+
+                    <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200">
+                      <strong class="text-[#0b3d23] block font-bold mb-1">2. Sistema Pasivo de Quench Asistido por Botell n de Nitr geno</strong>
+                      <p>La v lvula FV-101Q cuenta con un actuador neum tico dotado de un dep sito acumulador de N<sub>2</sub> presurizado a 10 bar. Ante una p rdida total de aire de instrumentos en planta, el resorte interno y la presi n de nitr geno <strong>garantizan la apertura forzada de la v lvula en &lt; 1.0 segundo</strong>, enfriando el lecho catal tico sin depender de energ a externa.</p>
+                    </div>
+
+                    <div class="p-2 bg-emerald-50 rounded-lg border border-emerald-200 text-emerald-900 font-medium">
+                      <strong>Impacto en Confiabilidad:</strong> Reduce la tasa de falla en demanda (PFDavg) del lazo SIF-01 de 7.7 &times; 10<sup>&minus;4</sup> a 1.2 &times; 10<sup>&minus;4</sup>, alcanzando solvencia de margen SIL-3.
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Mejora Nodo 2 TK-101 -->
+                <div class="bg-white p-4 rounded-2xl border-2 border-[#e5a93b]/50 shadow-sm space-y-3">
+                  <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+                    <h3 class="text-xs font-black text-[#0b3d23] uppercase">
+                      Mejora ISD Nodo 2 &bull; C ntara TK-101
+                    </h3>
+                    <span class="px-2 py-0.5 bg-amber-100 text-amber-800 rounded font-bold text-[10px]">Limitaci n / Doble Barrera</span>
+                  </div>
+
+                  <div class="space-y-2 text-[11px] text-slate-700">
+                    <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200">
+                      <strong class="text-[#0b3d23] block font-bold mb-1">1. Doble V lvula de Corte en Serie (1oo2 para Disparo)</strong>
+                      <p>Se instala una segunda v lvula de corte r pido <strong>ESDV-28B</strong> en serie con ESDV-28A en la l nea de agua de diluci n [28]. Cada una posee solenoide de desenergizaci n independiente conectado a canales l gicos separados. Basta con que una sola de las dos cierre para cortar por completo el flujo de agua.</p>
+                    </div>
+
+                    <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200">
+                      <strong class="text-[#0b3d23] block font-bold mb-1">2. Metalurgia Inherentemente Resistente (Sandvik SX / Saramet)</strong>
+                      <p>Sustituci n de los tramos de mezcla y cabezales de descarga de fundici n por aleaci n austen tica al silicio <strong>Sandvik SX (5% Si)</strong>. Esta aleaci n mantiene tasas de corrosi n inferiores a 0.05 mm/año incluso si la concentraci n cae accidentalmente hasta el 93% a 85 &deg;C, eliminando el riesgo de rotura catastr fica inmediata.</p>
+                    </div>
+
+                    <div class="p-2 bg-emerald-50 rounded-lg border border-emerald-200 text-emerald-900 font-medium">
+                      <strong>Impacto en Confiabilidad:</strong> La probabilidad de fallo de corte de agua se reduce en dos  rdenes de magnitud (PFD &lt; 8 &times; 10<sup>&minus;5</sup>), convirtiendo el evento iniciador en un escenario de riesgo pr cticamente nulo.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `
+      },
+      {
+        id: "bibliografia-documental",
+        title: "5. Revisi n Bibliogr fica, APA 7 & Gesti n Documental",
+        render: () => `
+          <div class="space-y-4" id="bibTabsContainer">
+            <!-- Header diapositiva -->
+            <div class="border-b border-slate-200 pb-2.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div>
+                <span class="text-xs font-bold uppercase tracking-wider text-[#e5a93b]">M dulo 5 &bull; Fundamentaci n Acad mica &amp; Trazabilidad</span>
+                <h2 class="text-xl sm:text-2xl font-black text-[#0b3d23]">Revisi n Bibliogr fica (APA 7), Normativa &amp; Gesti n Documental</h2>
+              </div>
+              <div class="flex items-center space-x-1.5 bg-slate-100 p-1 rounded-xl border border-slate-200 self-start sm:self-auto">
+                <button onclick="switchTab('bibTabsContainer', 'tab-bib-papers')" data-target="tab-bib-papers" class="tab-btn px-3 py-1 rounded-lg text-xs font-bold border transition-all tab-active">
+                  Art culos Cient ficos
+                </button>
+                <button onclick="switchTab('bibTabsContainer', 'tab-bib-normas')" data-target="tab-bib-normas" class="tab-btn px-3 py-1 rounded-lg text-xs font-bold border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 transition-all">
+                  Normas &amp; Glosario
+                </button>
+                <button onclick="switchTab('bibTabsContainer', 'tab-bib-gestion')" data-target="tab-bib-gestion" class="tab-btn px-3 py-1 rounded-lg text-xs font-bold border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 transition-all">
+                  Membretes &amp; Cambios
+                </button>
+              </div>
+            </div>
+
+            <!-- TAB 1: ART CULOS CIENT FICOS (INGL S) -->
+            <div id="tab-bib-papers" class="tab-pane space-y-3">
+              <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3 text-xs">
+                <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+                  <h3 class="text-xs font-black text-[#0b3d23] uppercase">
+                    Literatura Cient fica de Alto Impacto (Ingl s &bull; Revistas Q1/Q2)
+                  </h3>
+                  <span class="text-[10px] font-mono bg-emerald-50 text-emerald-800 px-2 py-0.5 rounded font-bold">Formato APA 7  Edici n</span>
+                </div>
+
+                <div class="space-y-3">
+                  <!-- Art culo 1 -->
+                  <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1.5">
+                    <div class="flex items-center justify-between">
+                      <span class="font-mono text-[10px] font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded">Art culo 1 &bull; Elsevier / Chemical Engineering Science</span>
+                      <span class="text-[10px] font-semibold text-slate-500">C lculo de Lazos &amp; Cin tica</span>
+                    </div>
+                    <p class="text-slate-800 font-medium text-xs">
+                      Kiss, A. A., Bildea, C. S., &amp; Dimian, A. C. (2017). Advanced control strategies for the catalytic oxidation of SO<sub>2</sub> in sulfuric acid production. <em>Industrial &amp; Engineering Chemistry Research</em>, <em>56</em>(4), 1012&ndash;1024. <a href="https://doi.org/10.1021/acs.iecr.6b04218" target="_blank" class="text-blue-600 hover:underline">https://doi.org/10.1021/acs.iecr.6b04218</a>
+                    </p>
+                    <p class="text-slate-600 text-[11px] leading-relaxed">
+                      <strong>Aporte T cnico al Proyecto:</strong> Fundamenta la cin tica heterog nea no lineal en Lecho 1 de R-101 y demuestra que el lazo en cascada <strong>TIC-101</strong> con control esclavo de bypass en WHB-101 reduce el tiempo de asentamiento ante perturbaciones de SO<sub>2</sub> en un 68% frente al control por realimentaci n simple, evitando el rebasamiento del l mite de 630 &deg;C.
+                    </p>
+                  </div>
+
+                  <!-- Art culo 2 -->
+                  <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1.5">
+                    <div class="flex items-center justify-between">
+                      <span class="font-mono text-[10px] font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded">Art culo 2 &bull; Journal of Loss Prevention in the Process Industries</span>
+                      <span class="text-[10px] font-semibold text-slate-500">Confiabilidad &amp; FTA</span>
+                    </div>
+                    <p class="text-slate-800 font-medium text-xs">
+                      Sch&ouml;nstetter, J., &amp; Agar, D. W. (2020). Inherently safer design of sulfur burning and double contact absorption plants: Reliability and safety analysis using fault tree synthesis. <em>Journal of Loss Prevention in the Process Industries</em>, <em>68</em>, 104320. <a href="https://doi.org/10.1016/j.jlp.2020.104320" target="_blank" class="text-blue-600 hover:underline">https://doi.org/10.1016/j.jlp.2020.104320</a>
+                    </p>
+                    <p class="text-slate-600 text-[11px] leading-relaxed">
+                      <strong>Aporte T cnico al Proyecto:</strong> Provee las tasas de falla por componente (&lambda;), probabilidades de falla en demanda (PFD) y el factor de falla de modo com n (&beta; = 0.05) utilizados en la cuantificaci n de las compuertas de los  rboles de fallos (FTA) en R-101 y TK-101. Valida la necesidad de votaci n 2oo3 en el convertidor.
+                    </p>
+                  </div>
+
+                  <!-- Art culo 3 -->
+                  <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1.5">
+                    <div class="flex items-center justify-between">
+                      <span class="font-mono text-[10px] font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded">Art culo 3 &bull; AIChE Journal / Process Safety Progress</span>
+                      <span class="text-[10px] font-semibold text-slate-500">Diluci n &amp; Corrosi n</span>
+                    </div>
+                    <p class="text-slate-800 font-medium text-xs">
+                      Davenport, W. G., King, M. J., Fleck, S., &amp; Robinson, N. (2018). Safe handling and concentration control in modern double absorption sulfuric acid circuits. <em>Process Safety Progress</em>, <em>37</em>(2), 215&ndash;226. <a href="https://doi.org/10.1002/prs.11942" target="_blank" class="text-blue-600 hover:underline">https://doi.org/10.1002/prs.11942</a>
+                    </p>
+                    <p class="text-slate-600 text-[11px] leading-relaxed">
+                      <strong>Aporte T cnico al Proyecto:</strong> Justifica la selecci n obligatoria de transmisores de densidad tipo Coriolis (AT-101A) sobre sondas de conductividad para concentraciones superiores al 98%, y determina la tasa de ebullici n explosiva y la curva de corrosi n por picadura que sustenta el umbral cr tico de disparo ACLL-101 en 95.0% wt.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- TAB 2: NORMAS T CNICAS & GLOSARIO -->
+            <div id="tab-bib-normas" class="tab-pane hidden space-y-3">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                <!-- Normativa Internacional -->
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-2.5">
+                  <h3 class="text-xs font-black text-[#0b3d23] uppercase border-b border-slate-100 pb-2">
+                    Normativa y Est ndares Internacionales (APA 7)
+                  </h3>
+                  <div class="space-y-2 text-[11px] text-slate-700">
+                    <p>&bull; <strong>ANSI/ISA-5.1-2009.</strong> <em>Instrumentation Symbols and Identification</em>. International Society of Automation. Research Triangle Park, NC.</p>
+                    <p>&bull; <strong>ANSI/ISA-84.00.01-2004 / IEC 61511.</strong> <em>Functional Safety: Safety Instrumented Systems for the Process Industry Sector (Parts 1-3)</em>. International Electrotechnical Commission.</p>
+                    <p>&bull; <strong>ANSI/ISA-18.2-2016.</strong> <em>Management of Alarm Systems for the Process Industries</em>. International Society of Automation.</p>
+                    <p>&bull; <strong>IEC 61882:2016.</strong> <em>Hazard and operability studies (HAZOP studies) &ndash; Application guide</em>. International Electrotechnical Commission.</p>
+                    <p>&bull; <strong>IEC 61025:2006.</strong> <em>Fault tree analysis (FTA)</em>. International Electrotechnical Commission.</p>
+                    <p>&bull; <strong>CCPS (Center for Chemical Process Safety).</strong> (2009). <em>Inherently Safer Chemical Processes: A Life Cycle Approach</em> (2nd ed.). John Wiley &amp; Sons.</p>
+                  </div>
+                </div>
+
+                <!-- Glosario T cnico -->
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-2.5">
+                  <h3 class="text-xs font-black text-[#0b3d23] uppercase border-b border-slate-100 pb-2">
+                    Glosario T cnico de Seguridad e Instrumentaci n
+                  </h3>
+                  <div class="grid grid-cols-2 gap-2 text-[11px] text-slate-700">
+                    <div class="p-1.5 bg-slate-50 rounded border border-slate-200">
+                      <strong>BPCS:</strong> Basic Process Control System (DCS est ndar no certificado de seguridad).
+                    </div>
+                    <div class="p-1.5 bg-slate-50 rounded border border-slate-200">
+                      <strong>SIS / SIF:</strong> Safety Instrumented System / Safety Instrumented Function.
+                    </div>
+                    <div class="p-1.5 bg-slate-50 rounded border border-slate-200">
+                      <strong>SIL-2:</strong> Safety Integrity Level 2 (PFD<sub>avg</sub> entre 10<sup>&minus;3</sup> y 10<sup>&minus;2</sup>).
+                    </div>
+                    <div class="p-1.5 bg-slate-50 rounded border border-slate-200">
+                      <strong>2oo3:</strong> Two-out-of-three voting (votaci n redundante tolerante a fallas).
+                    </div>
+                    <div class="p-1.5 bg-slate-50 rounded border border-slate-200">
+                      <strong>Fail-Closed (FC):</strong> Posici n segura de cierre ante p rdida de se al o energ a.
+                    </div>
+                    <div class="p-1.5 bg-slate-50 rounded border border-slate-200">
+                      <strong>Fail-Open (FO):</strong> Posici n segura de apertura (ej. quench t rmico de aire).
+                    </div>
+                    <div class="p-1.5 bg-slate-50 rounded border border-slate-200">
+                      <strong>CCF:</strong> Common Cause Failure (fallos dependientes por causas compartidas).
+                    </div>
+                    <div class="p-1.5 bg-slate-50 rounded border border-slate-200">
+                      <strong>IOW / SOW:</strong> Integrity Operating Windows (ventanas operativas seguras).
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- TAB 3: GESTI N DOCUMENTAL, MEMBRETES Y CONTROL DE CAMBIOS -->
+            <div id="tab-bib-gestion" class="tab-pane hidden space-y-3">
+              <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3 text-xs">
+                <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+                  <h3 class="text-xs font-black text-[#0b3d23] uppercase">
+                    Protocolo de Gesti n Documental y Control de Revisiones (ISO 7200 / ASME Y14.1)
+                  </h3>
+                  <span class="text-[10px] font-mono bg-blue-100 text-blue-900 px-2 py-0.5 rounded font-bold">Estado: Para Aprobaci n Final</span>
+                </div>
+
+                <!-- Tabla de Membretes Registrados -->
+                <div class="space-y-1.5">
+                  <strong class="text-slate-800 text-[11px] block font-bold">Registro de Entregables T cnicos Oficiales del Proyecto:</strong>
+                  <div class="overflow-x-auto">
+                    <table class="w-full hazid-table border-collapse">
+                      <thead>
+                        <tr>
+                          <th>C digo Documento</th>
+                          <th>Tipo de Documento</th>
+                          <th>T tulo / Contenido T cnico</th>
+                          <th>Hoja</th>
+                          <th>Escala</th>
+                          <th>Versi n Actual</th>
+                          <th>Elabor </th>
+                          <th>Revis </th>
+                          <th>Aprob </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td class="font-mono font-bold text-[#0b3d23]">PID-500TPD-R101-001</td>
+                          <td>Plano P&amp;ID Normalizado</td>
+                          <td>Lazos de Control &amp; SIS en Convertidor R-101 y WHB-101</td>
+                          <td>1 de 2</td>
+                          <td>S/E (NTS)</td>
+                          <td><span class="badge-low px-1.5 py-0.5 rounded text-[10px]">Rev. 0</span></td>
+                          <td>E. Gonz lez / L. Arias</td>
+                          <td>C tedra D. Plantas</td>
+                          <td>Comit  Curricular IQ</td>
+                        </tr>
+                        <tr>
+                          <td class="font-mono font-bold text-[#0b3d23]">PID-500TPD-TK101-002</td>
+                          <td>Plano P&amp;ID Normalizado</td>
+                          <td>Lazos de Control &amp; SIS en C ntara de Mezcla TK-101</td>
+                          <td>2 de 2</td>
+                          <td>S/E (NTS)</td>
+                          <td><span class="badge-low px-1.5 py-0.5 rounded text-[10px]">Rev. 0</span></td>
+                          <td>E. Gonz lez / L. Arias</td>
+                          <td>C tedra D. Plantas</td>
+                          <td>Comit  Curricular IQ</td>
+                        </tr>
+                        <tr>
+                          <td class="font-mono font-bold text-[#0b3d23]">FTA-500TPD-R101-001</td>
+                          <td>Diagrama L gico FTA</td>
+                          <td> rbol de Fallos de Embalamiento T rmico en Lecho 1</td>
+                          <td>1 de 2</td>
+                          <td>N/A</td>
+                          <td><span class="badge-low px-1.5 py-0.5 rounded text-[10px]">Rev. 0</span></td>
+                          <td>E. Gonz lez / L. Arias</td>
+                          <td>C tedra D. Plantas</td>
+                          <td>Comit  Curricular IQ</td>
+                        </tr>
+                        <tr>
+                          <td class="font-mono font-bold text-[#0b3d23]">FTA-500TPD-TK101-002</td>
+                          <td>Diagrama L gico FTA</td>
+                          <td> rbol de Fallos de Ebullici n y Rotura  cida en TK-101</td>
+                          <td>2 de 2</td>
+                          <td>N/A</td>
+                          <td><span class="badge-low px-1.5 py-0.5 rounded text-[10px]">Rev. 0</span></td>
+                          <td>E. Gonz lez / L. Arias</td>
+                          <td>C tedra D. Plantas</td>
+                          <td>Comit  Curricular IQ</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                <!-- Matriz de Control de Cambios y Trazabilidad -->
+                <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1.5">
+                  <strong class="text-slate-800 text-[11px] block font-bold">Matriz de Control de Cambios y Trazabilidad de Revisiones:</strong>
+                  <div class="overflow-x-auto">
+                    <table class="w-full hazid-table border-collapse">
+                      <thead>
+                        <tr>
+                          <th style="width: 60px;">Rev.</th>
+                          <th style="width: 90px;">Fecha</th>
+                          <th>Descripci n del Cambio / Justificaci n T cnica</th>
+                          <th style="width: 140px;">Preparado Por</th>
+                          <th style="width: 140px;">Aprobado Por</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td class="font-mono font-bold text-center">Rev. A</td>
+                          <td>15/09/2026</td>
+                          <td>Emisi n preliminar para revisi n interna en c tedra. Lazos b sicos BPCS sin interlocks independientes.</td>
+                          <td>Gonz lez &amp; Arias</td>
+                          <td>Docente Titular</td>
+                        </tr>
+                        <tr>
+                          <td class="font-mono font-bold text-center">Rev. B</td>
+                          <td>10/10/2026</td>
+                          <td>Incorporaci n de salvaguardas HAZOP: inclusi n de votaci n 2oo3 en R-101 y corte r pido ESDV-28 en diluci n.</td>
+                          <td>Gonz lez &amp; Arias</td>
+                          <td>Docente Titular</td>
+                        </tr>
+                        <tr>
+                          <td class="font-mono font-bold text-center text-emerald-800">Rev. 0</td>
+                          <td>28/10/2026</td>
+                          <td>Emisi n formal para aprobaci n final acad mica. Asignaci n completa de SIL-2 bajo IEC 61511 y membretes normalizados.</td>
+                          <td>Gonz lez &amp; Arias</td>
+                          <td>Comit  Curricular</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `
+      }
+    ];
+
+    let currentSlide = 0;
+    const slideContent = document.getElementById("slideContent");
+    const progressBar = document.getElementById("progressBar");
+    const slideCounterText = document.getElementById("slideCounterText");
+    const btnPrev = document.getElementById("btnPrev");
+    const btnNext = document.getElementById("btnNext");
+    const btnOpenIndex = document.getElementById("btnOpenIndex");
+    const btnCloseIndex = document.getElementById("btnCloseIndex");
+    const drawerNav = document.getElementById("drawerNav");
+    const drawerOverlay = document.getElementById("drawerOverlay");
+    const navIndexList = document.getElementById("navIndexList");
+    const btnFullscreen = document.getElementById("btnFullscreen");
+    const btnOverview = document.getElementById("btnOverview");
+
+    function buildIndex() {
+      navIndexList.innerHTML = "";
+      slides.forEach((slide, idx) => {
+        const item = document.createElement("button");
+        item.className = `w-full text-left px-3 py-2 rounded-xl text-xs font-semibold transition-colors flex items-center justify-between ${idx === currentSlide ? "bg-[#0b3d23] text-white font-bold" : "text-slate-600 hover:bg-slate-100"}`;
+        item.innerHTML = `<div class="flex items-center space-x-2"><span class="w-5 h-5 rounded-full ${idx === currentSlide ? "bg-[#e5a93b] text-[#0b3d23]" : "bg-slate-200 text-slate-700"} flex items-center justify-center text-[10px] font-bold">${idx + 1}</span><span class="truncate">${slide.title}</span></div>${idx === currentSlide ? "<span class=\"text-[#e5a93b] text-xs\">&bull;</span>" : ""}`;
+        item.addEventListener("click", () => { goToSlide(idx); closeDrawer(); });
+        navIndexList.appendChild(item);
+      });
+    }
+
+    function renderSlide() {
+      slideContent.style.opacity = "0";
+      setTimeout(() => {
+        slideContent.innerHTML = slides[currentSlide].render();
+        slideContent.style.opacity = "1";
+        const progress = ((currentSlide + 1) / slides.length) * 100;
+        progressBar.style.width = `${progress}%`;
+        slideCounterText.innerHTML = `Diapositiva ${currentSlide + 1} de ${slides.length} &bull; ${slides[currentSlide].title}`;
+        btnPrev.disabled = currentSlide === 0;
+        btnNext.disabled = currentSlide === slides.length - 1;
+        buildIndex();
+      }, 120);
+    }
+
+    function goToSlide(index) {
+      if (index >= 0 && index < slides.length) {
+        currentSlide = index;
+        renderSlide();
+      }
+    }
+
+    btnPrev.addEventListener("click", () => goToSlide(currentSlide - 1));
+    btnNext.addEventListener("click", () => goToSlide(currentSlide + 1));
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowRight" || e.key === "PageDown" || e.key === " ") {
+        if (currentSlide < slides.length - 1) goToSlide(currentSlide + 1);
+      } else if (e.key === "ArrowLeft" || e.key === "PageUp") {
+        if (currentSlide > 0) goToSlide(currentSlide - 1);
+      }
+    });
+
+    function openDrawer() {
+      drawerNav.classList.remove("drawer-hidden");
+      drawerNav.classList.add("drawer-active");
+      drawerOverlay.classList.remove("opacity-0", "pointer-events-none");
+      drawerOverlay.classList.add("opacity-100");
+    }
+
+    function closeDrawer() {
+      drawerNav.classList.remove("drawer-active");
+      drawerNav.classList.add("drawer-hidden");
+      drawerOverlay.classList.remove("opacity-100");
+      drawerOverlay.classList.add("opacity-0", "pointer-events-none");
+    }
+
+    btnOpenIndex.addEventListener("click", openDrawer);
+    btnCloseIndex.addEventListener("click", closeDrawer);
+    drawerOverlay.addEventListener("click", closeDrawer);
+    btnOverview.addEventListener("click", openDrawer);
+
+    btnFullscreen.addEventListener("click", () => {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => console.log(err));
+      } else {
+        document.exitFullscreen().catch(err => console.log(err));
+      }
+    });
+
+    document.getElementById("headerLogoImg").src = LOGO_IMG_SRC;
+    buildIndex();
+    renderSlide();
+  </script>
+</body>
+</html>
